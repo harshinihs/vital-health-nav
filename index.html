@@ -1,0 +1,6768 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>VITAL HEALTH NAV</title>
+
+    <!-- Leaflet -->
+    <link
+        rel="stylesheet"
+        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    >
+
+    <!-- MapTiler SDK CSS -->
+    <link
+        rel="stylesheet"
+        href="https://cdn.maptiler.com/maptiler-sdk-js/v4.1.0/maptiler-sdk.css"
+    >
+
+    <!-- CSS -->
+    <link
+        rel="stylesheet"
+        href="/static/style.css"
+    >
+
+    <style>
+        .google-map-btn {
+            border: 1px solid #c9d0b2;
+            border-radius: 12px;
+            padding: 11px 14px;
+            background: #f3f1e5;
+            color: #4f5c35;
+            font-weight: 800;
+            cursor: pointer;
+            transition: 0.2s ease;
+        }
+
+        .google-map-btn:hover {
+            background: #e6e2cb;
+            transform: translateY(-1px);
+        }
+
+        .hospital-actions .google-map-btn {
+            flex: 1;
+        }
+
+        .navigation-controls .google-map-btn {
+            width: 100%;
+        }
+    </style>
+
+</head>
+
+
+<body>
+
+<div class="app-shell">
+
+
+    <!-- =====================================================
+         TOP HEADER
+         ===================================================== -->
+
+    <header class="top-header">
+
+        <div class="brand-section">
+
+            <div class="brand-icon">
+                VH
+            </div>
+
+
+            <div class="brand-text">
+
+                <h1 id="brandTitle">
+                    VITAL HEALTH NAV
+                </h1>
+
+
+                <p id="brandSubtitle">
+                    Smart healthcare navigation
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- LANGUAGE -->
+
+        <div class="language-switch">
+
+            <button
+                id="englishBtn"
+                class="lang-btn active"
+                type="button"
+            >
+                English
+            </button>
+
+
+            <button
+                id="tamilBtn"
+                class="lang-btn"
+                type="button"
+            >
+                தமிழ்
+            </button>
+
+        </div>
+
+    </header>
+
+
+
+    <!-- =====================================================
+         MAIN
+         ===================================================== -->
+
+    <main class="main-content">
+
+
+        <!-- =================================================
+             ASSISTANT
+             ================================================= -->
+
+        <section class="chat-card">
+
+
+            <!-- ASSISTANT HEADER -->
+
+            <div class="assistant-header">
+
+                <div class="assistant-avatar">
+                    VH
+                </div>
+
+
+                <div class="assistant-details">
+
+                    <div
+                        class="assistant-name"
+                        id="assistantName"
+                    >
+                        VH NAV ASSISTANT
+                    </div>
+
+
+                    <div class="assistant-status">
+
+                        <span class="status-dot"></span>
+
+                        <span id="assistantStatus">
+                            Ready to help
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="assistant-badge">
+                    HEALTH
+                </div>
+
+            </div>
+
+
+
+            <!-- CHAT -->
+
+            <div
+                id="chatBox"
+                class="chat-box"
+            >
+            </div>
+
+
+            <!-- QUICK REPLIES -->
+
+            <div
+                id="quickReplies"
+                class="quick-replies"
+            >
+            </div>
+
+
+        </section>
+
+
+
+        <!-- =================================================
+             USER LOCATION MAP
+             ================================================= -->
+
+        <section
+            id="mapSection"
+            class="map-card hidden"
+        >
+
+            <div class="map-card-header">
+
+                <div>
+
+                    <span class="section-eyebrow">
+                        LOCATION
+                    </span>
+
+
+                    <h2 id="mapTitle">
+                        Choose your location
+                    </h2>
+
+                </div>
+
+
+                <button
+                    id="closeMapBtn"
+                    class="map-close"
+                    type="button"
+                >
+                    ×
+                </button>
+
+            </div>
+
+
+            <p
+                id="mapInstruction"
+                class="map-instruction"
+            >
+                Drag the pin to your location and confirm.
+            </p>
+
+
+            <div
+                id="map"
+                class="leaflet-map"
+            >
+            </div>
+
+
+            <div class="location-display">
+
+                <div class="location-pin-icon">
+                    ●
+                </div>
+
+
+                <div>
+
+                    <span
+                        id="selectedLocationLabel"
+                        class="location-label"
+                    >
+                        Selected location
+                    </span>
+
+
+                    <span
+                        id="selectedLocationText"
+                        class="location-value"
+                    >
+                        Location not selected
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <button
+                id="confirmMapBtn"
+                class="confirm-btn"
+                type="button"
+            >
+                Confirm Location
+            </button>
+
+            <button
+                id="googleLocationBtn"
+                class="google-map-btn"
+                type="button"
+            >
+                🌐 Open Google Maps
+            </button>
+
+        </section>
+
+
+
+        <!-- =================================================
+             LIVE NAVIGATION MAP
+             ================================================= -->
+
+        <section
+            id="hospitalMapSection"
+            class="map-card navigation-card hidden"
+        >
+
+
+            <!-- NAV HEADER -->
+
+            <div class="map-card-header">
+
+                <div>
+
+                    <span
+                        id="hospitalMapEyebrow"
+                        class="section-eyebrow"
+                    >
+                        LIVE NAVIGATION
+                    </span>
+
+
+                    <div class="navigation-title-row">
+
+                        <h2 id="hospitalMapTitle">
+                            Route to Hospital
+                        </h2>
+
+
+                        <span
+                            id="liveBadge"
+                            class="live-badge hidden"
+                        >
+                            <span class="live-dot"></span>
+                            LIVE
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <button
+                    id="closeHospitalMapBtn"
+                    class="map-close"
+                    type="button"
+                >
+                    ×
+                </button>
+
+            </div>
+
+
+            <p
+                id="hospitalMapInstruction"
+                class="map-instruction"
+            >
+                Your route to the selected hospital is shown below.
+            </p>
+
+
+
+            <!-- NAVIGATION STATUS -->
+
+            <div
+                id="navigationStatus"
+                class="navigation-status"
+            >
+
+                <span
+                    id="navigationStatusText"
+                >
+                    Route ready
+                </span>
+
+            </div>
+
+
+
+            <!-- MAP -->
+
+            <div
+                id="hospitalMap"
+                class="leaflet-map navigation-map"
+            >
+            </div>
+
+
+
+            <!-- LIVE STATS -->
+
+            <div
+                id="routeSummary"
+                class="route-summary hidden"
+            >
+
+
+                <div class="route-stat">
+
+                    <span
+                        id="routeDistanceLabel"
+                        class="route-stat-label"
+                    >
+                        Remaining distance
+                    </span>
+
+
+                    <strong
+                        id="routeDistance"
+                        class="route-stat-value"
+                    >
+                        --
+                    </strong>
+
+                </div>
+
+
+
+                <div class="route-stat">
+
+                    <span
+                        id="routeDurationLabel"
+                        class="route-stat-label"
+                    >
+                        Estimated time
+                    </span>
+
+
+                    <strong
+                        id="routeDuration"
+                        class="route-stat-value"
+                    >
+                        --
+                    </strong>
+
+                </div>
+
+
+
+                <div class="route-stat">
+
+                    <span
+                        id="routeSpeedLabel"
+                        class="route-stat-label"
+                    >
+                        Current speed
+                    </span>
+
+
+                    <strong
+                        id="routeSpeed"
+                        class="route-stat-value"
+                    >
+                        --
+                    </strong>
+
+                </div>
+
+
+
+                <div class="route-stat">
+
+                    <span
+                        id="routeAccuracyLabel"
+                        class="route-stat-label"
+                    >
+                        GPS accuracy
+                    </span>
+
+
+                    <strong
+                        id="routeAccuracy"
+                        class="route-stat-value"
+                    >
+                        --
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- UPCOMING MANEUVER -->
+
+            <div
+                id="nextManeuver"
+                class="next-maneuver hidden"
+            >
+
+                <div class="maneuver-icon">
+                    ↗
+                </div>
+
+
+                <div>
+
+                    <span
+                        id="nextManeuverLabel"
+                        class="maneuver-label"
+                    >
+                        Next
+                    </span>
+
+
+                    <strong
+                        id="nextManeuverText"
+                        class="maneuver-text"
+                    >
+                        Continue
+                    </strong>
+
+
+                    <span
+                        id="nextManeuverDistance"
+                        class="maneuver-distance"
+                    >
+                    </span>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- HOSPITAL INFO -->
+
+            <div
+                id="hospitalMapInfo"
+                class="location-display"
+            >
+            </div>
+
+
+
+            <!-- ROUTE STEPS -->
+
+            <div
+                id="routeStepsSection"
+                class="route-steps-section hidden"
+            >
+
+                <h3 id="routeStepsTitle">
+                    Route steps
+                </h3>
+
+
+                <div
+                    id="routeSteps"
+                    class="route-steps"
+                >
+                </div>
+
+            </div>
+
+
+
+            <!-- ROUTE CONTROLS -->
+
+            <div class="navigation-controls">
+
+                <button
+                    id="startNavigationBtn"
+                    class="start-navigation-btn"
+                    type="button"
+                >
+                    🧭 Start Live Navigation
+                </button>
+
+
+                <button
+                    id="stopNavigationBtn"
+                    class="stop-navigation-btn hidden"
+                    type="button"
+                >
+                    ■ Stop Navigation
+                </button>
+
+                <button
+                    id="openGoogleMapsBtn"
+                    class="google-map-btn"
+                    type="button"
+                >
+                    🌐 Open Google Maps
+                </button>
+
+            </div>
+
+
+
+            <!-- ROUTE ERROR -->
+
+            <div
+                id="routeStatus"
+                class="route-status hidden"
+            >
+            </div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             FOOTER
+             ================================================= -->
+
+        <footer class="app-footer">
+
+            <span id="footerAssistantName">
+                VH NAV ASSISTANT
+            </span>
+
+
+            <span class="footer-divider">
+                •
+            </span>
+
+
+            <span id="footerSystemName">
+                Hospital discovery system
+            </span>
+
+        </footer>
+
+
+    </main>
+
+</div>
+
+
+
+<!-- Leaflet -->
+<script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
+</script>
+
+<!-- MapTiler SDK + Leaflet plugin -->
+<script
+    src="https://cdn.maptiler.com/maptiler-sdk-js/v4.1.0/maptiler-sdk.umd.min.js">
+</script>
+<script
+    src="https://cdn.maptiler.com/leaflet-maptilersdk/v4.1.0/leaflet-maptilersdk.umd.min.js">
+</script>
+
+
+<script>
+
+/* =========================================================
+   LANGUAGE
+   ========================================================= */
+
+let currentLanguage =
+    sessionStorage.getItem("vh_nav_language") === "ta"
+        ? "ta"
+        : "en";
+
+
+const USERNAME_KEY = "vh_nav_username";
+const USERNAME_TAMIL_KEY = "vh_nav_username_ta";
+
+
+/* =========================================================
+   MAPTILER CONFIGURATION
+   ========================================================= */
+
+// Replace this placeholder with your own MapTiler Cloud API key.
+// A MapTiler key is required to show Tamil/English localized map labels.
+const MAPTILER_API_KEY = "YOUR_MAPTILER_API_KEY_HERE";
+
+
+/* ---------------------------------------------------------
+   USERNAME TRANSLATION
+   Keep the same Tamil-name mapping used on the login page so
+   the exact translated name is carried into the main app.
+   --------------------------------------------------------- */
+
+const englishNameTamilMap = {
+    "gayatri": "காயத்ரி",
+    "harshini": "ஹர்ஷினி",
+    "harshitha": "ஹர்ஷிதா",
+    "hannah": "ஹன்னா",
+    "gopika": "கோபிகா",
+    "divya": "திவ்யா",
+    "priya": "பிரியா",
+    "ananya": "அனன்யா",
+    "shruthi": "ஸ்ருதி",
+    "sruthi": "ஸ்ருதி",
+    "shreya": "ஷ்ரேயா",
+    "sneha": "ஸ்நேஹா",
+    "kavya": "காவ்யா",
+    "keerthana": "கீர்த்தனா",
+    "keerthi": "கீர்த்தி",
+    "pooja": "பூஜா",
+    "pavithra": "பவித்ரா",
+    "lavanya": "லாவண்யா",
+    "swetha": "ஸ்வேதா",
+    "vidhya": "வித்யா",
+    "vidya": "வித்யா",
+    "meena": "மீனா",
+    "meera": "மீரா",
+    "deepa": "தீபா",
+    "deepika": "தீபிகா",
+    "athira": "அதிரா",
+    "aishwarya": "ஐஸ்வர்யா",
+    "abhishek": "அபிஷேக்",
+    "arjun": "அர்ஜுன்",
+    "ashwin": "அஷ்வின்",
+    "karthik": "கார்த்திக்",
+    "rahul": "ராகுல்",
+    "rohit": "ரோஹித்",
+    "surya": "சூர்யா",
+    "vignesh": "விக்னேஷ்",
+    "vinoth": "வினோத்",
+    "vikram": "விக்ரம்",
+    "hari": "ஹரி",
+    "krishna": "கிருஷ்ணா",
+    "mohan": "மோகன்",
+    "ravi": "ரவி",
+    "sathish": "சதீஷ்",
+    "sanjay": "சஞ்சய்",
+    "siva": "சிவா",
+    "shiva": "சிவா"
+};
+
+function cleanUserName(value) {
+    return String(value || "User")
+        .trim()
+        .replace(/\s+/g, " ");
+}
+
+function translateUserNameToTamil(name) {
+    const cleaned = cleanUserName(name);
+
+    if (!cleaned) {
+        return "";
+    }
+
+    return cleaned
+        .split(" ")
+        .map(word => englishNameTamilMap[word.toLowerCase()] || word)
+        .join(" ");
+}
+
+const currentUserNameEn = cleanUserName(
+    sessionStorage.getItem(USERNAME_KEY) || "User"
+);
+
+const storedTamilName = cleanUserName(
+    sessionStorage.getItem(USERNAME_TAMIL_KEY) || ""
+);
+
+/*
+   Prefer the translated name saved by login.html.
+   If an older session does not contain it, create the same
+   translation here so the Tamil greeting is still correct.
+*/
+const currentUserNameTa =
+    storedTamilName && storedTamilName !== currentUserNameEn
+        ? storedTamilName
+        : translateUserNameToTamil(currentUserNameEn);
+
+
+const translations = {
+
+    /* -----------------------------------------------------
+       BRAND
+       ----------------------------------------------------- */
+
+    brandTitle: {
+        en: "VITAL HEALTH NAV",
+        ta: "வைடல் ஹெல்த் நெவ்"
+    },
+
+    assistantName: {
+        en: "VH NAV ASSISTANT",
+        ta: "VH நெவ் உதவியாளர்"
+    },
+
+    brandSubtitle: {
+        en: "Smart healthcare navigation",
+        ta: "ஸ்மார்ட் சுகாதார வழிசெலுத்தல்"
+    },
+
+    footerSystem: {
+        en: "Hospital discovery system",
+        ta: "மருத்துவமனை கண்டறியும் அமைப்பு"
+    },
+
+    /* -----------------------------------------------------
+       CHAT
+       ----------------------------------------------------- */
+
+    welcome: {
+        en: "Hello! What health problem do you need a hospital for?",
+        ta: "வணக்கம்! எந்த உடல்நலப் பிரச்சினைக்காக மருத்துவமனை தேவைப்படுகிறது?"
+    },
+
+    chooseLocation: {
+        en: "How would you like to provide your location?",
+        ta: "உங்கள் இருப்பிடத்தை எவ்வாறு வழங்க விரும்புகிறீர்கள்?"
+    },
+
+    currentLocation: {
+        en: "Use My Current Location",
+        ta: "எனது தற்போதைய இருப்பிடத்தைப் பயன்படுத்து"
+    },
+
+    mapLocation: {
+        en: "Choose Location on Map",
+        ta: "வரைபடத்தில் இருப்பிடத்தைத் தேர்ந்தெடுக்கவும்"
+    },
+
+    googleMaps: {
+        en: "Open Google Maps",
+        ta: "Google Maps-ல் திறக்கவும்"
+    },
+
+    locationReceived: {
+        en: "Your current location has been received.",
+        ta: "உங்கள் தற்போதைய இருப்பிடம் பெறப்பட்டது."
+    },
+
+    mapSelected: {
+        en: "Your map location has been selected.",
+        ta: "வரைபடத்தில் உங்கள் இருப்பிடம் தேர்ந்தெடுக்கப்பட்டுள்ளது."
+    },
+
+    hospitalType: {
+        en: "Which type of hospital would you prefer?",
+        ta: "எந்த வகையான மருத்துவமனையை விரும்புகிறீர்கள்?"
+    },
+
+    finding: {
+        en: "Finding suitable hospitals for you...",
+        ta: "உங்களுக்கு பொருத்தமான மருத்துவமனைகளைத் தேடுகிறது..."
+    },
+
+    requiredSpecialty: {
+        en: "Required specialty",
+        ta: "தேவையான சிறப்பு பிரிவு"
+    },
+
+    recommendationGroup: {
+        en: "Recommendation group",
+        ta: "பரிந்துரை குழு"
+    },
+
+    /* -----------------------------------------------------
+       HOSPITAL TYPE
+       ----------------------------------------------------- */
+
+    government: {
+        en: "Government",
+        ta: "அரசு"
+    },
+
+    private: {
+        en: "Private",
+        ta: "தனியார்"
+    },
+
+    any: {
+        en: "Any",
+        ta: "ஏதேனும்"
+    },
+
+    /* -----------------------------------------------------
+       RECOMMENDATION
+       ----------------------------------------------------- */
+
+    specificSpecialty: {
+        en: "Specific Specialty + Multi-Speciality",
+        ta: "குறிப்பிட்ட சிறப்பு பிரிவு + பல்துறை சிறப்பு"
+    },
+
+    generalMedicine: {
+        en: "General Medicine",
+        ta: "பொது மருத்துவம்"
+    },
+
+    /* -----------------------------------------------------
+       CROWD
+       ----------------------------------------------------- */
+
+    estimatedCrowd: {
+        en: "Estimated Crowd",
+        ta: "மதிப்பிடப்பட்ட கூட்டம்"
+    },
+
+    prototypeEstimate: {
+        en: "Prototype estimate",
+        ta: "முன்மாதிரி மதிப்பீடு"
+    },
+
+    low: {
+        en: "Low",
+        ta: "குறைவு"
+    },
+
+    moderate: {
+        en: "Moderate",
+        ta: "மிதமான"
+    },
+
+    high: {
+        en: "High",
+        ta: "அதிகம்"
+    },
+
+    /* -----------------------------------------------------
+       DISTANCE
+       ----------------------------------------------------- */
+
+    distance: {
+        en: "Distance",
+        ta: "தூரம்"
+    },
+
+    km: {
+        en: "km",
+        ta: "கி.மீ"
+    },
+
+    /* -----------------------------------------------------
+       MAP
+       ----------------------------------------------------- */
+
+    selectedLocation: {
+        en: "Selected location",
+        ta: "தேர்ந்தெடுக்கப்பட்ட இருப்பிடம்"
+    },
+
+    confirmLocation: {
+        en: "Confirm Location",
+        ta: "இருப்பிடத்தை உறுதிப்படுத்து"
+    },
+
+    locationNotSelected: {
+        en: "Location not selected",
+        ta: "இருப்பிடம் தேர்ந்தெடுக்கப்படவில்லை"
+    },
+
+    mapInstruction: {
+        en: "Drag the pin to your location and confirm.",
+        ta: "பின்னை உங்கள் இருப்பிடத்திற்கு இழுத்து, உறுதிப்படுத்தவும்."
+    },
+
+    locating: {
+        en: "Getting your current location...",
+        ta: "உங்கள் தற்போதைய இருப்பிடத்தைப் பெறுகிறது..."
+    },
+
+    locationError: {
+        en: "Unable to get your location. Please allow location access or choose a location on the map.",
+        ta: "உங்கள் இருப்பிடத்தைப் பெற முடியவில்லை. இருப்பிட அனுமதியை வழங்கவும் அல்லது வரைபடத்தில் இருப்பிடத்தைத் தேர்ந்தெடுக்கவும்."
+    },
+
+    /* -----------------------------------------------------
+       LIVE NAVIGATION
+       ----------------------------------------------------- */
+
+    liveNavigation: {
+        en: "LIVE NAVIGATION",
+        ta: "நேரடி வழிசெலுத்தல்"
+    },
+
+    routeToHospital: {
+        en: "Route to Hospital",
+        ta: "மருத்துவமனைக்கு வழி"
+    },
+
+    routeInstruction: {
+        en: "Your route to the selected hospital is shown below.",
+        ta: "தேர்ந்தெடுக்கப்பட்ட மருத்துவமனைக்கான உங்கள் வழித்தடம் கீழே காட்டப்பட்டுள்ளது."
+    },
+
+    routeReady: {
+        en: "Route ready",
+        ta: "வழித்தடம் தயாராக உள்ளது"
+    },
+
+    calculatingRoute: {
+        en: "Calculating road route...",
+        ta: "சாலை வழித்தடத்தை கணக்கிடுகிறது..."
+    },
+
+    liveGpsActive: {
+        en: "Live GPS navigation active",
+        ta: "நேரடி GPS வழிசெலுத்தல் செயல்பாட்டில் உள்ளது"
+    },
+
+    requestingGps: {
+        en: "Waiting for your live GPS position...",
+        ta: "உங்கள் நேரடி GPS இருப்பிடத்திற்காக காத்திருக்கிறது..."
+    },
+
+    rerouting: {
+        en: "You moved away from the route. Recalculating...",
+        ta: "நீங்கள் வழித்தடத்திலிருந்து விலகியுள்ளீர்கள். மீண்டும் கணக்கிடுகிறது..."
+    },
+
+    arrived: {
+        en: "You have arrived at the hospital.",
+        ta: "நீங்கள் மருத்துவமனையை அடைந்துவிட்டீர்கள்."
+    },
+
+    routeDistance: {
+        en: "Remaining distance",
+        ta: "மீதமுள்ள தூரம்"
+    },
+
+    estimatedTime: {
+        en: "Estimated time",
+        ta: "மதிப்பிடப்பட்ட நேரம்"
+    },
+
+    currentSpeed: {
+        en: "Current speed",
+        ta: "தற்போதைய வேகம்"
+    },
+
+    gpsAccuracy: {
+        en: "GPS accuracy",
+        ta: "GPS துல்லியம்"
+    },
+
+    next: {
+        en: "Next",
+        ta: "அடுத்து"
+    },
+
+    routeSteps: {
+        en: "Route steps",
+        ta: "வழித்தட படிகள்"
+    },
+
+    startNavigation: {
+        en: "🧭 Start Live Navigation",
+        ta: "🧭 நேரடி வழிசெலுத்தலைத் தொடங்கு"
+    },
+
+    stopNavigation: {
+        en: "■ Stop Navigation",
+        ta: "■ வழிசெலுத்தலை நிறுத்து"
+    },
+
+    navigationStopped: {
+        en: "Live navigation stopped",
+        ta: "நேரடி வழிசெலுத்தல் நிறுத்தப்பட்டது"
+    },
+
+    /* -----------------------------------------------------
+       GENERAL
+       ----------------------------------------------------- */
+
+    hospital: {
+        en: "Hospital",
+        ta: "மருத்துவமனை"
+    },
+
+    yourLocation: {
+        en: "Your Location",
+        ta: "உங்கள் இருப்பிடம்"
+    },
+
+    noCoordinates: {
+        en: "Location information is not available for this hospital.",
+        ta: "இந்த மருத்துவமனைக்கான இருப்பிட தகவல் கிடைக்கவில்லை."
+    },
+
+    routeError: {
+        en: "Unable to calculate the route. Please try again.",
+        ta: "வழித்தடத்தை கணக்கிட முடியவில்லை. மீண்டும் முயற்சிக்கவும்."
+    },
+
+    routeUnavailable: {
+        en: "No road route was found between your location and this hospital.",
+        ta: "உங்கள் இருப்பிடத்திற்கும் இந்த மருத்துவமனைக்கும் இடையே சாலை வழித்தடம் கிடைக்கவில்லை."
+    },
+
+    noResults: {
+        en: "No suitable hospitals were found for the selected options.",
+        ta: "தேர்ந்தெடுக்கப்பட்ட விருப்பங்களுக்கு பொருத்தமான மருத்துவமனைகள் எதுவும் கிடைக்கவில்லை."
+    },
+
+    retry: {
+        en: "Start Again",
+        ta: "மீண்டும் தொடங்குங்கள்"
+    },
+
+    ready: {
+        en: "Ready to help",
+        ta: "உதவ தயாராக உள்ளது"
+    },
+
+    findingHospitals: {
+        en: "Finding hospitals",
+        ta: "மருத்துவமனைகளைத் தேடுகிறது"
+    },
+
+    hospitalsFound: {
+        en: "Hospitals found",
+        ta: "மருத்துவமனைகள் கிடைத்தன"
+    },
+
+    currentLocationLabel: {
+        en: "Your current GPS position",
+        ta: "உங்கள் தற்போதைய GPS இருப்பிடம்"
+    },
+
+    accuracyMeters: {
+        en: "m accuracy",
+        ta: "மீ துல்லியம்"
+    }
+
+};
+
+
+/* =========================================================
+   TRANSLATION
+   ========================================================= */
+
+function t(key) {
+
+    if (!translations[key]) {
+        return key;
+    }
+
+    return translations[key][currentLanguage];
+}
+
+
+/* =========================================================
+   SPECIALTY TRANSLATIONS
+   ========================================================= */
+
+const specialtyTamil = {
+
+    "Cardiology": "இதய மருத்துவம்",
+
+    "Orthopedics": "எலும்பியல்",
+
+    "Dermatology": "தோல் மருத்துவம்",
+
+    "Neurology": "நரம்பியல்",
+
+    "Pediatrics": "குழந்தைகள் மருத்துவம்",
+
+    "Gynecology": "மகளிர் மருத்துவம்",
+
+    "Pulmonology": "நுரையீரல் மருத்துவம்",
+
+    "Nephrology": "சிறுநீரக மருத்துவம்",
+
+    "Urology": "சிறுநீரகப்பாதை மருத்துவம்",
+
+    "Ophthalmology": "கண் மருத்துவம்",
+
+    "ENT": "காது மூக்கு தொண்டை மருத்துவம்",
+
+    "Dental": "பல் மருத்துவம்",
+
+    "Oncology": "புற்றுநோய் மருத்துவம்",
+
+    "Gastrology": "இரைப்பை குடல் மருத்துவம்",
+
+    "Psychology": "மனநல மருத்துவம்",
+
+    "Fertility": "கருத்தரிப்பு மருத்துவம்",
+
+    "General Medicine": "பொது மருத்துவம்"
+
+};
+
+
+function translateSpecialty(value) {
+
+    if (
+        currentLanguage === "en"
+    ) {
+
+        return value;
+    }
+
+    return specialtyTamil[value] || value;
+}
+
+
+/* =========================================================
+   CATEGORIES
+   ========================================================= */
+
+const categories = [
+
+    {
+        value: "heart",
+        en: "Heart Problem",
+        ta: "இதய பிரச்சினை"
+    },
+
+    {
+        value: "joint",
+        en: "Bone / Joint Problem",
+        ta: "எலும்பு / மூட்டு பிரச்சினை"
+    },
+
+    {
+        value: "skin",
+        en: "Skin Problem",
+        ta: "தோல் பிரச்சினை"
+    },
+
+    {
+        value: "brain",
+        en: "Brain / Nerve Problem",
+        ta: "மூளை / நரம்பு பிரச்சினை"
+    },
+
+    {
+        value: "child",
+        en: "Child Health",
+        ta: "குழந்தைகள் உடல்நலம்"
+    },
+
+    {
+        value: "womens",
+        en: "Women's Health",
+        ta: "மகளிர் உடல்நலம்"
+    },
+
+    {
+        value: "lung",
+        en: "Breathing / Lung Problem",
+        ta: "சுவாசம் / நுரையீரல் பிரச்சினை"
+    },
+
+    {
+        value: "kidney",
+        en: "Kidney Problem",
+        ta: "சிறுநீரக பிரச்சினை"
+    },
+
+    {
+        value: "urinary",
+        en: "Urinary Problem",
+        ta: "சிறுநீர் பிரச்சினை"
+    },
+
+    {
+        value: "eye",
+        en: "Eye Problem",
+        ta: "கண் பிரச்சினை"
+    },
+
+    {
+        value: "ent",
+        en: "Ear / Nose / Throat",
+        ta: "காது / மூக்கு / தொண்டை"
+    },
+
+    {
+        value: "dental",
+        en: "Dental Problem",
+        ta: "பல் பிரச்சினை"
+    },
+
+    {
+        value: "cancer",
+        en: "Cancer-related Problem",
+        ta: "புற்றுநோய் தொடர்பான பிரச்சினை"
+    },
+
+    {
+        value: "stomach",
+        en: "Stomach / Digestive Problem",
+        ta: "வயிறு / செரிமான பிரச்சினை"
+    },
+
+    {
+        value: "mental",
+        en: "Mental Health",
+        ta: "மனநலம்"
+    },
+
+    {
+        value: "fertility",
+        en: "Fertility Problem",
+        ta: "கருத்தரிப்பு பிரச்சினை"
+    },
+
+    {
+        value: "general",
+        en: "General Health Problem",
+        ta: "பொது உடல்நலப் பிரச்சினை"
+    },
+
+    {
+        value: "other",
+        en: "Other",
+        ta: "மற்றவை",
+        disabled: true
+    }
+
+];
+
+
+/* =========================================================
+   SPECIALTY MAP
+   ========================================================= */
+
+const specialtyMap = {
+
+    heart: "Cardiology",
+
+    joint: "Orthopedics",
+
+    skin: "Dermatology",
+
+    brain: "Neurology",
+
+    child: "Pediatrics",
+
+    womens: "Gynecology",
+
+    lung: "Pulmonology",
+
+    kidney: "Nephrology",
+
+    urinary: "Urology",
+
+    eye: "Ophthalmology",
+
+    ent: "ENT",
+
+    dental: "Dental",
+
+    cancer: "Oncology",
+
+    stomach: "Gastrology",
+
+    mental: "Psychology",
+
+    fertility: "Fertility",
+
+    general: "General Medicine"
+
+};
+
+
+/* =========================================================
+   APPLICATION STATE
+   ========================================================= */
+
+let selectedCategory = null;
+
+let selectedLocation = null;
+
+let selectedHospitalPreference = null;
+
+let latitude = null;
+
+let longitude = null;
+
+
+/* =========================================================
+   USER LOCATION MAP
+   ========================================================= */
+
+let map = null;
+
+let marker = null;
+
+let mapTilerLayer = null;
+
+
+/* =========================================================
+   LIVE NAVIGATION STATE
+   ========================================================= */
+
+let hospitalMap = null;
+
+let hospitalMapTilerLayer = null;
+
+let userMapMarker = null;
+
+let hospitalMapMarker = null;
+
+let hospitalRouteLine = null;
+
+let hospitalRouteOutline = null;
+
+let selectedHospitalForMap = null;
+
+let lastRouteData = null;
+
+let routeGeometry = [];
+
+let routeCoordinateDistances = [];
+
+let routeTotalGeometryDistance = 0;
+
+let navigationWatchId = null;
+
+let navigationActive = false;
+
+let lastRerouteTime = 0;
+
+let currentRouteStepIndex = 0;
+
+let spokenSteps = new Set();
+
+let wakeLock = null;
+
+let navigationAnimationFrame = null;
+
+
+/* =========================================================
+   OTHER STATE
+   ========================================================= */
+
+let lastResults = [];
+
+let chatMessages = [];
+
+
+/* =========================================================
+   DOM
+   ========================================================= */
+
+const chatBox =
+    document.getElementById(
+        "chatBox"
+    );
+
+const quickReplies =
+    document.getElementById(
+        "quickReplies"
+    );
+
+const mapSection =
+    document.getElementById(
+        "mapSection"
+    );
+
+const mapTitle =
+    document.getElementById(
+        "mapTitle"
+    );
+
+const mapInstruction =
+    document.getElementById(
+        "mapInstruction"
+    );
+
+const selectedLocationLabel =
+    document.getElementById(
+        "selectedLocationLabel"
+    );
+
+const selectedLocationText =
+    document.getElementById(
+        "selectedLocationText"
+    );
+
+const confirmMapBtn =
+    document.getElementById(
+        "confirmMapBtn"
+    );
+
+const closeMapBtn =
+    document.getElementById(
+        "closeMapBtn"
+    );
+
+const googleLocationBtn =
+    document.getElementById(
+        "googleLocationBtn"
+    );
+
+const assistantStatus =
+    document.getElementById(
+        "assistantStatus"
+    );
+
+
+/* =========================================================
+   NAV DOM
+   ========================================================= */
+
+const hospitalMapSection =
+    document.getElementById(
+        "hospitalMapSection"
+    );
+
+const hospitalMapEyebrow =
+    document.getElementById(
+        "hospitalMapEyebrow"
+    );
+
+const hospitalMapTitle =
+    document.getElementById(
+        "hospitalMapTitle"
+    );
+
+const hospitalMapInstruction =
+    document.getElementById(
+        "hospitalMapInstruction"
+    );
+
+const hospitalMapInfo =
+    document.getElementById(
+        "hospitalMapInfo"
+    );
+
+const closeHospitalMapBtn =
+    document.getElementById(
+        "closeHospitalMapBtn"
+    );
+
+const routeSummary =
+    document.getElementById(
+        "routeSummary"
+    );
+
+const routeDistanceLabel =
+    document.getElementById(
+        "routeDistanceLabel"
+    );
+
+const routeDistance =
+    document.getElementById(
+        "routeDistance"
+    );
+
+const routeDurationLabel =
+    document.getElementById(
+        "routeDurationLabel"
+    );
+
+const routeDuration =
+    document.getElementById(
+        "routeDuration"
+    );
+
+const routeSpeedLabel =
+    document.getElementById(
+        "routeSpeedLabel"
+    );
+
+const routeSpeed =
+    document.getElementById(
+        "routeSpeed"
+    );
+
+const routeAccuracyLabel =
+    document.getElementById(
+        "routeAccuracyLabel"
+    );
+
+const routeAccuracy =
+    document.getElementById(
+        "routeAccuracy"
+    );
+
+const routeStepsSection =
+    document.getElementById(
+        "routeStepsSection"
+    );
+
+const routeStepsTitle =
+    document.getElementById(
+        "routeStepsTitle"
+    );
+
+const routeSteps =
+    document.getElementById(
+        "routeSteps"
+    );
+
+const routeStatus =
+    document.getElementById(
+        "routeStatus"
+    );
+
+const startNavigationBtn =
+    document.getElementById(
+        "startNavigationBtn"
+    );
+
+const stopNavigationBtn =
+    document.getElementById(
+        "stopNavigationBtn"
+    );
+
+const openGoogleMapsBtn =
+    document.getElementById(
+        "openGoogleMapsBtn"
+    );
+
+const navigationStatus =
+    document.getElementById(
+        "navigationStatus"
+    );
+
+const navigationStatusText =
+    document.getElementById(
+        "navigationStatusText"
+    );
+
+const liveBadge =
+    document.getElementById(
+        "liveBadge"
+    );
+
+const nextManeuver =
+    document.getElementById(
+        "nextManeuver"
+    );
+
+const nextManeuverLabel =
+    document.getElementById(
+        "nextManeuverLabel"
+    );
+
+const nextManeuverText =
+    document.getElementById(
+        "nextManeuverText"
+    );
+
+const nextManeuverDistance =
+    document.getElementById(
+        "nextManeuverDistance"
+    );
+
+const nextManeuverIcon =
+    document.querySelector(
+        ".maneuver-icon"
+    );
+
+
+/* =========================================================
+   CHAT
+   ========================================================= */
+
+function addMessage(
+    role,
+    en,
+    ta
+) {
+
+    chatMessages.push({
+
+        role: role,
+
+        en: en,
+
+        ta: ta
+
+    });
+
+
+    renderChat();
+}
+
+
+function renderChat() {
+
+    chatBox.innerHTML = "";
+
+
+    chatMessages.forEach(
+        message => {
+
+            const messageWrapper =
+                document.createElement(
+                    "div"
+                );
+
+
+            messageWrapper.className =
+
+                message.role === "user"
+
+                    ? "message-wrapper user-wrapper"
+
+                    : "message-wrapper bot-wrapper";
+
+
+            if (
+                message.role === "bot"
+            ) {
+
+                const messageLabel =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                messageLabel.className =
+                    "message-label";
+
+
+                messageLabel.innerHTML = `
+
+                    <span class="mini-avatar">
+                        VH
+                    </span>
+
+                    <span>
+                        ${escapeHtml(
+                            t("assistantName")
+                        )}
+                    </span>
+
+                `;
+
+
+                messageWrapper.appendChild(
+                    messageLabel
+                );
+
+            }
+
+
+            const messageDiv =
+                document.createElement(
+                    "div"
+                );
+
+
+            messageDiv.className =
+
+                message.role === "user"
+
+                    ? "message user-message"
+
+                    : "message bot-message";
+
+
+            messageDiv.textContent =
+
+                currentLanguage === "ta"
+
+                    ? message.ta
+
+                    : message.en;
+
+
+            messageWrapper.appendChild(
+                messageDiv
+            );
+
+
+            chatBox.appendChild(
+                messageWrapper
+            );
+
+        }
+    );
+
+
+    chatBox.scrollTop =
+        chatBox.scrollHeight;
+}
+
+
+/* =========================================================
+   QUICK REPLIES
+   ========================================================= */
+
+function clearQuickReplies() {
+
+    quickReplies.innerHTML = "";
+}
+
+
+function createReplyButton(
+    text,
+    callback,
+    disabled = false
+) {
+
+    const button =
+        document.createElement(
+            "button"
+        );
+
+
+    button.className =
+        "reply-btn";
+
+
+    button.textContent =
+        text;
+
+
+    button.disabled =
+        disabled;
+
+
+    button.addEventListener(
+        "click",
+        callback
+    );
+
+
+    quickReplies.appendChild(
+        button
+    );
+}
+
+
+/* =========================================================
+   START
+   ========================================================= */
+
+function startConversation() {
+
+    stopLiveNavigation();
+
+
+    chatMessages = [];
+
+    selectedCategory = null;
+
+    selectedLocation = null;
+
+    selectedHospitalPreference = null;
+
+    latitude = null;
+
+    longitude = null;
+
+    lastResults = [];
+
+    selectedHospitalForMap = null;
+
+    lastRouteData = null;
+
+
+    hideMap();
+
+    closeHospitalMap();
+
+
+    assistantStatus.textContent =
+        t("ready");
+
+
+    addMessage(
+        "bot",
+        `Hello ${currentUserNameEn}! What health problem do you need a hospital for?`,
+        `வணக்கம் ${currentUserNameTa}! எந்த உடல்நலப் பிரச்சினைக்காக மருத்துவமனை தேவைப்படுகிறது?`
+    );
+
+
+    showCategoryReplies();
+}
+
+
+/* =========================================================
+   CATEGORIES
+   ========================================================= */
+
+function showCategoryReplies() {
+
+    clearQuickReplies();
+
+
+    categories.forEach(
+        category => {
+
+            createReplyButton(
+
+                currentLanguage === "ta"
+
+                    ? category.ta
+
+                    : category.en,
+
+                () =>
+                    selectCategory(
+                        category
+                    ),
+
+                category.disabled || false
+            );
+
+        }
+    );
+}
+
+
+function selectCategory(
+    category
+) {
+
+    if (
+        category.disabled
+    ) {
+
+        return;
+    }
+
+
+    selectedCategory =
+        category.value;
+
+
+    addMessage(
+        "user",
+        category.en,
+        category.ta
+    );
+
+
+    const specialty =
+        specialtyMap[
+            selectedCategory
+        ];
+
+
+    if (!specialty) {
+        return;
+    }
+
+
+    addMessage(
+
+        "bot",
+
+        `${translations.requiredSpecialty.en}: ${specialty}`,
+
+        `${translations.requiredSpecialty.ta}: ${translateSpecialty(specialty)}`
+    );
+
+
+    setTimeout(
+        () => {
+
+            addMessage(
+                "bot",
+                translations.chooseLocation.en,
+                translations.chooseLocation.ta
+            );
+
+
+            showLocationReplies();
+
+        },
+        250
+    );
+}
+
+
+/* =========================================================
+   LOCATION OPTIONS
+   ========================================================= */
+
+function showLocationReplies() {
+
+    clearQuickReplies();
+
+
+    createReplyButton(
+        `📍 ${t("currentLocation")}`,
+        getCurrentLocation
+    );
+
+
+    createReplyButton(
+        `🗺️ ${t("mapLocation")}`,
+        openMap
+    );
+}
+
+
+/* =========================================================
+   DEVICE LOCATION
+   ========================================================= */
+
+function getCurrentLocation() {
+
+    clearQuickReplies();
+
+
+    addMessage(
+        "user",
+        translations.currentLocation.en,
+        translations.currentLocation.ta
+    );
+
+
+    addMessage(
+        "bot",
+        translations.locating.en,
+        translations.locating.ta
+    );
+
+
+    if (
+        !navigator.geolocation
+    ) {
+
+        addMessage(
+            "bot",
+            translations.locationError.en,
+            translations.locationError.ta
+        );
+
+
+        showLocationReplies();
+
+        return;
+    }
+
+
+    navigator.geolocation.getCurrentPosition(
+
+        position => {
+
+            latitude =
+                position.coords.latitude;
+
+            longitude =
+                position.coords.longitude;
+
+            selectedLocation =
+                "device";
+
+
+            addMessage(
+                "bot",
+                translations.locationReceived.en,
+                translations.locationReceived.ta
+            );
+
+
+            showHospitalPreference();
+
+        },
+
+
+        error => {
+
+            console.error(
+                "Geolocation error:",
+                error
+            );
+
+
+            addMessage(
+                "bot",
+                translations.locationError.en,
+                translations.locationError.ta
+            );
+
+
+            showLocationReplies();
+
+        },
+
+
+        {
+            enableHighAccuracy: true,
+
+            timeout: 15000,
+
+            maximumAge: 0
+        }
+
+    );
+}
+
+
+/* =========================================================
+   USER MAP
+   ========================================================= */
+
+function openMap() {
+
+    showMapTilerKeyWarning();
+
+    clearQuickReplies();
+
+
+    addMessage(
+        "user",
+        translations.mapLocation.en,
+        translations.mapLocation.ta
+    );
+
+
+    mapSection.classList.remove(
+        "hidden"
+    );
+
+
+    updateMapTexts();
+
+
+    setTimeout(
+        () => {
+
+            if (!map) {
+
+                map =
+                    L.map(
+                        "map"
+                    ).setView(
+                        [
+                            11.1271,
+                            78.6569
+                        ],
+                        7
+                    );
+
+
+                if (hasValidMapTilerKey() && L.maptiler) {
+
+                    mapTilerLayer = L.maptiler.maptilerLayer({
+                        apiKey: MAPTILER_API_KEY,
+                        language: currentLanguage,
+                        navigationControl: false,
+                        geolocateControl: false,
+                        scaleControl: false,
+                        fullscreenControl: false,
+                        terrainControl: false
+                    }).addTo(
+                        map
+                    );
+
+                }
+
+                else {
+
+                    L.tileLayer(
+                        "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                        {
+                            attribution:
+                                "&copy; OpenStreetMap contributors"
+                        }
+                    ).addTo(
+                        map
+                    );
+
+                    showMapTilerKeyWarning();
+                }
+
+
+                marker =
+                    L.marker(
+                        [
+                            11.1271,
+                            78.6569
+                        ],
+                        {
+                            draggable: true
+                        }
+                    ).addTo(
+                        map
+                    );
+
+
+                marker.on(
+                    "dragend",
+                    () => {
+
+                        const position =
+                            marker.getLatLng();
+
+
+                        latitude =
+                            position.lat;
+
+                        longitude =
+                            position.lng;
+
+
+                        updateMapLocationText();
+
+                    }
+                );
+
+            }
+
+
+            map.invalidateSize();
+
+        },
+        300
+    );
+}
+
+
+function updateMapLocationText() {
+
+    if (
+
+        latitude === null ||
+
+        longitude === null
+
+    ) {
+
+        selectedLocationText.textContent =
+            t(
+                "locationNotSelected"
+            );
+
+        return;
+    }
+
+
+    selectedLocationText.textContent =
+
+        `${latitude.toFixed(6)}, ${longitude.toFixed(6)}`;
+}
+
+
+function updateMapTexts() {
+
+    mapTitle.textContent =
+
+        currentLanguage === "ta"
+
+            ? "உங்கள் இருப்பிடத்தைத் தேர்ந்தெடுக்கவும்"
+
+            : "Choose your location";
+
+
+    mapInstruction.textContent =
+        t(
+            "mapInstruction"
+        );
+
+
+    selectedLocationLabel.textContent =
+        t(
+            "selectedLocation"
+        );
+
+
+    confirmMapBtn.textContent =
+        t(
+            "confirmLocation"
+        );
+
+
+    googleLocationBtn.textContent =
+        `🌐 ${t("googleMaps")}`;
+
+
+    updateMapLocationText();
+}
+
+
+function hideMap() {
+
+    mapSection.classList.add(
+        "hidden"
+    );
+}
+
+
+/* =========================================================
+   CONFIRM USER MAP
+   ========================================================= */
+
+confirmMapBtn.addEventListener(
+    "click",
+    () => {
+
+        if (
+
+            latitude === null ||
+
+            longitude === null
+
+        ) {
+
+            return;
+        }
+
+
+        selectedLocation =
+            "map";
+
+
+        hideMap();
+
+
+        addMessage(
+            "bot",
+            translations.mapSelected.en,
+            translations.mapSelected.ta
+        );
+
+
+        showHospitalPreference();
+    }
+);
+
+
+/* =========================================================
+   CLOSE USER MAP
+   ========================================================= */
+
+closeMapBtn.addEventListener(
+    "click",
+    () => {
+
+        hideMap();
+
+
+        addMessage(
+            "bot",
+            translations.chooseLocation.en,
+            translations.chooseLocation.ta
+        );
+
+
+        showLocationReplies();
+    }
+);
+
+
+/* =========================================================
+   HOSPITAL TYPE
+   ========================================================= */
+
+function showHospitalPreference() {
+
+    clearQuickReplies();
+
+
+    addMessage(
+        "bot",
+        translations.hospitalType.en,
+        translations.hospitalType.ta
+    );
+
+
+    createReplyButton(
+        `🏥 ${t("government")}`,
+        () =>
+            selectHospitalPreference(
+                "Government"
+            )
+    );
+
+
+    createReplyButton(
+        `🏨 ${t("private")}`,
+        () =>
+            selectHospitalPreference(
+                "Private"
+            )
+    );
+
+
+    createReplyButton(
+        `🏥 ${t("any")}`,
+        () =>
+            selectHospitalPreference(
+                "Any"
+            )
+    );
+}
+
+
+/* =========================================================
+   HOSPITAL TYPE SELECTION
+   ========================================================= */
+
+function selectHospitalPreference(
+    type
+) {
+
+    selectedHospitalPreference =
+        type;
+
+
+    let englishText;
+
+    let tamilText;
+
+
+    if (
+        type === "Government"
+    ) {
+
+        englishText =
+            translations.government.en;
+
+        tamilText =
+            translations.government.ta;
+
+    }
+
+    else if (
+        type === "Private"
+    ) {
+
+        englishText =
+            translations.private.en;
+
+        tamilText =
+            translations.private.ta;
+
+    }
+
+    else {
+
+        englishText =
+            translations.any.en;
+
+        tamilText =
+            translations.any.ta;
+    }
+
+
+    addMessage(
+        "user",
+        englishText,
+        tamilText
+    );
+
+
+    clearQuickReplies();
+
+
+    assistantStatus.textContent =
+        t(
+            "findingHospitals"
+        );
+
+
+    addMessage(
+        "bot",
+        translations.finding.en,
+        translations.finding.ta
+    );
+
+
+    getRecommendations();
+}
+
+
+/* =========================================================
+   RECOMMENDATIONS
+   ========================================================= */
+
+async function getRecommendations() {
+
+    try {
+
+        const requestBody = {
+
+            category:
+                selectedCategory,
+
+            latitude:
+                latitude,
+
+            longitude:
+                longitude,
+
+            hospital_preference:
+                selectedHospitalPreference,
+
+            location_source:
+                selectedLocation
+
+        };
+
+
+        console.log(
+            "Recommendation request:",
+            requestBody
+        );
+
+
+        const response =
+            await fetch(
+                "/recommend",
+                {
+
+                    method:
+                        "POST",
+
+                    headers: {
+
+                        "Content-Type":
+                            "application/json"
+
+                    },
+
+                    body:
+                        JSON.stringify(
+                            requestBody
+                        )
+                }
+            );
+
+
+        if (
+            !response.ok
+        ) {
+
+            const errorText =
+                await response.text();
+
+
+            console.error(
+                "Backend error:",
+                errorText
+            );
+
+
+            throw new Error(
+                `HTTP ${response.status}`
+            );
+        }
+
+
+        const data =
+            await response.json();
+
+
+        console.log(
+            "Recommendation response:",
+            data
+        );
+
+
+        lastResults =
+
+            Array.isArray(
+                data.results
+            )
+
+                ? data.results
+
+                : (
+
+                    Array.isArray(
+                        data.hospitals
+                    )
+
+                        ? data.hospitals
+
+                        : []
+
+                );
+
+
+        if (
+            !lastResults.length
+        ) {
+
+            addMessage(
+                "bot",
+                translations.noResults.en,
+                translations.noResults.ta
+            );
+
+
+            assistantStatus.textContent =
+                t(
+                    "ready"
+                );
+
+
+            showRestartButton();
+
+            return;
+        }
+
+
+        assistantStatus.textContent =
+            t(
+                "hospitalsFound"
+            );
+
+
+        renderResults(
+            lastResults
+        );
+
+
+        showRestartButton();
+
+    }
+
+
+    catch (error) {
+
+        console.error(
+            "Recommendation error:",
+            error
+        );
+
+
+        addMessage(
+            "bot",
+            translations.serverError.en,
+            translations.serverError.ta
+        );
+
+
+        assistantStatus.textContent =
+            t(
+                "ready"
+            );
+
+
+        showRestartButton();
+    }
+}
+
+
+/* =========================================================
+   RESULT CARDS
+   ========================================================= */
+
+function renderResults(
+    results
+) {
+
+    const existing =
+        document.querySelector(
+            ".results-wrapper"
+        );
+
+
+    if (existing) {
+
+        existing.remove();
+
+    }
+
+
+    const resultWrapper =
+        document.createElement(
+            "div"
+        );
+
+
+    resultWrapper.className =
+        "results-wrapper";
+
+
+    results.forEach(
+        (hospital, index) => {
+
+            const card =
+                document.createElement(
+                    "div"
+                );
+
+
+            card.className =
+                "hospital-card";
+
+
+            /* ---------------------------------------------
+               NAME
+               --------------------------------------------- */
+
+            const hospitalName =
+
+                currentLanguage === "ta"
+
+                    ? (
+
+                        hospital.hospital_name_ta ||
+
+                        hospital.hospital_name ||
+
+                        "Hospital"
+
+                    )
+
+                    : (
+
+                        hospital.hospital_name ||
+
+                        "Hospital"
+
+                    );
+
+
+            /* ---------------------------------------------
+               DISTRICT
+               --------------------------------------------- */
+
+            const district =
+                hospital.district ||
+                "";
+
+
+            /* ---------------------------------------------
+               OWNERSHIP
+               --------------------------------------------- */
+
+            let ownershipText =
+
+                hospital.ownership_type_display ||
+
+                hospital.ownership_group ||
+
+                hospital.ownership ||
+
+                "";
+
+
+            if (
+                currentLanguage === "ta"
+            ) {
+
+                const ownershipLower =
+                    String(
+                        ownershipText
+                    ).toLowerCase();
+
+
+                if (
+                    ownershipLower.includes(
+                        "government"
+                    )
+                ) {
+
+                    ownershipText =
+                        translations.government.ta;
+
+                }
+
+                else if (
+                    ownershipLower.includes(
+                        "private"
+                    )
+                ) {
+
+                    ownershipText =
+                        translations.private.ta;
+                }
+
+            }
+
+
+            /* ---------------------------------------------
+               GROUP
+               --------------------------------------------- */
+
+            const groupValue =
+
+                hospital.recommendation_group ||
+
+                hospital.recommendation_tier ||
+
+                hospital.group ||
+
+                "";
+
+
+            let groupText =
+                groupValue;
+
+
+            const groupLower =
+                String(
+                    groupValue
+                ).toLowerCase();
+
+
+            if (
+
+                groupLower.includes(
+                    "specific"
+                )
+
+                ||
+
+                groupLower.includes(
+                    "multi"
+                )
+
+            ) {
+
+                groupText =
+                    t(
+                        "specificSpecialty"
+                    );
+
+            }
+
+            else if (
+
+                groupLower.includes(
+                    "general"
+                )
+
+            ) {
+
+                groupText =
+                    t(
+                        "generalMedicine"
+                    );
+
+            }
+
+
+            /* ---------------------------------------------
+               DISTANCE
+               --------------------------------------------- */
+
+            let distanceValue =
+
+                hospital.distance_km ??
+
+                hospital.distance ??
+
+                0;
+
+
+            distanceValue =
+                Number(
+                    distanceValue
+                );
+
+
+            if (
+                Number.isNaN(
+                    distanceValue
+                )
+            ) {
+
+                distanceValue = 0;
+            }
+
+
+            /* ---------------------------------------------
+               CROWD
+               --------------------------------------------- */
+
+            let crowdScore =
+
+                hospital.crowd_score ??
+
+                0;
+
+
+            crowdScore =
+                Number(
+                    crowdScore
+                );
+
+
+            if (
+                Number.isNaN(
+                    crowdScore
+                )
+            ) {
+
+                crowdScore = 0;
+            }
+
+
+            crowdScore =
+                Math.max(
+                    0,
+                    Math.min(
+                        10,
+                        crowdScore
+                    )
+                );
+
+
+            const crowdPercent =
+                crowdScore * 10;
+
+
+            /* ---------------------------------------------
+               CROWD LEVEL
+               --------------------------------------------- */
+
+            let crowdLevel =
+
+                hospital.crowd_level ||
+
+                "Moderate";
+
+
+            const crowdLower =
+                String(
+                    crowdLevel
+                ).toLowerCase();
+
+
+            if (
+                currentLanguage === "ta"
+            ) {
+
+                if (
+                    crowdLower === "low"
+                ) {
+
+                    crowdLevel =
+                        translations.low.ta;
+
+                }
+
+                else if (
+                    crowdLower === "moderate"
+                ) {
+
+                    crowdLevel =
+                        translations.moderate.ta;
+
+                }
+
+                else if (
+                    crowdLower === "high"
+                ) {
+
+                    crowdLevel =
+                        translations.high.ta;
+                }
+
+            }
+
+
+            /* ---------------------------------------------
+               TIME
+               --------------------------------------------- */
+
+            let timePeriod =
+
+                hospital.time_period ||
+
+                "";
+
+
+            /* ---------------------------------------------
+               CARD HTML
+               --------------------------------------------- */
+
+            card.innerHTML = `
+
+                <div class="hospital-rank">
+
+                    <span>#</span>
+
+                    ${index + 1}
+
+                </div>
+
+
+                <div
+                    class="hospital-card-content"
+                >
+
+                    <h3
+                        class="hospital-name"
+                    >
+
+                        ${escapeHtml(
+                            hospitalName
+                        )}
+
+                    </h3>
+
+
+                    <p
+                        class="hospital-meta"
+                    >
+
+                        ${escapeHtml(
+                            district
+                        )}
+
+                        ${
+                            district
+                                ? " • "
+                                : ""
+                        }
+
+                        ${escapeHtml(
+                            ownershipText
+                        )}
+
+                    </p>
+
+
+                    <div
+                        class="hospital-info-grid"
+                    >
+
+                        <div
+                            class="metric-box"
+                        >
+
+                            <span
+                                class="metric-label"
+                            >
+
+                                ${escapeHtml(
+                                    t("distance")
+                                )}
+
+                            </span>
+
+
+                            <strong
+                                class="metric-value"
+                            >
+
+                                ${distanceValue.toFixed(2)}
+
+                                ${escapeHtml(
+                                    t("km")
+                                )}
+
+                            </strong>
+
+                        </div>
+
+
+                        <div
+                            class="metric-box"
+                        >
+
+                            <span
+                                class="metric-label"
+                            >
+
+                                ${escapeHtml(
+                                    t(
+                                        "recommendationGroup"
+                                    )
+                                )}
+
+                            </span>
+
+
+                            <span
+                                class="group-badge"
+                            >
+
+                                ${escapeHtml(
+                                    groupText
+                                )}
+
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <div
+                        class="crowd-section"
+                    >
+
+                        <div
+                            class="crowd-title-row"
+                        >
+
+                            <div>
+
+                                <span
+                                    class="crowd-label"
+                                >
+
+                                    ${escapeHtml(
+                                        t(
+                                            "estimatedCrowd"
+                                        )
+                                    )}
+
+                                </span>
+
+
+                                <span
+                                    class="crowd-subtitle"
+                                >
+
+                                    ${escapeHtml(
+                                        t(
+                                            "prototypeEstimate"
+                                        )
+                                    )}
+
+                                </span>
+
+                            </div>
+
+
+                            <strong
+                                class="crowd-score"
+                            >
+
+                                ${crowdScore.toFixed(1)}/10
+
+                            </strong>
+
+                        </div>
+
+
+                        <div
+                            class="crowd-track"
+                        >
+
+                            <div
+                                class="crowd-fill"
+                                style="
+                                    width:${crowdPercent}%;
+                                "
+                            ></div>
+
+                        </div>
+
+
+                        <div
+                            class="crowd-footer"
+                        >
+
+                            <span>
+                                ${escapeHtml(
+                                    crowdLevel
+                                )}
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- ACTIONS -->
+
+                    <div
+                        class="hospital-actions"
+                    >
+
+                        <button
+                            class="map-action-btn"
+                            type="button"
+                            data-action="map"
+                        >
+
+                            📍
+
+                            ${
+                                currentLanguage === "ta"
+                                    ? "வரைபடத்தில் பார்க்க"
+                                    : "View on Map"
+                            }
+
+                        </button>
+
+
+                        <button
+                            class="direction-action-btn"
+                            type="button"
+                            data-action="route"
+                        >
+
+                            🧭
+
+                            ${
+                                currentLanguage === "ta"
+                                    ? "நேரடி வழிசெலுத்தல்"
+                                    : "Live Navigation"
+                            }
+
+                        </button>
+
+                        <button
+                            class="google-map-btn card-google-map-btn"
+                            type="button"
+                            data-action="google"
+                        >
+
+                            🌐
+
+                            ${escapeHtml(t("googleMaps"))}
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+            `;
+
+
+            /* ---------------------------------------------
+               MAP BUTTON
+               --------------------------------------------- */
+
+            const mapButton =
+                card.querySelector(
+                    '[data-action="map"]'
+                );
+
+
+            mapButton.addEventListener(
+                "click",
+                () => {
+
+                    openHospitalMap(
+                        hospital,
+                        false
+                    );
+
+                }
+            );
+
+
+            /* ---------------------------------------------
+               NAV BUTTON
+               --------------------------------------------- */
+
+            const routeButton =
+                card.querySelector(
+                    '[data-action="route"]'
+                );
+
+
+            routeButton.addEventListener(
+                "click",
+                () => {
+
+                    openHospitalMap(
+                        hospital,
+                        true
+                    );
+
+                }
+            );
+
+
+            /* ---------------------------------------------
+               GOOGLE MAPS BUTTON
+               --------------------------------------------- */
+
+            const googleButton =
+                card.querySelector(
+                    '[data-action="google"]'
+                );
+
+
+            googleButton.addEventListener(
+                "click",
+                () => {
+
+                    openGoogleMapsDirections(
+                        hospital
+                    );
+
+                }
+            );
+
+
+            resultWrapper.appendChild(
+                card
+            );
+
+        }
+    );
+
+
+    chatBox.appendChild(
+        resultWrapper
+    );
+
+
+    chatBox.scrollTop =
+        chatBox.scrollHeight;
+}
+
+
+/* =========================================================
+   OPEN HOSPITAL MAP
+   ========================================================= */
+
+function openHospitalMap(
+    hospital,
+    startLive
+) {
+
+    showMapTilerKeyWarning();
+
+    selectedHospitalForMap =
+        hospital;
+
+
+    stopLiveNavigation();
+
+
+    lastRouteData =
+        null;
+
+
+    resetRouteGeometry();
+
+
+    hospitalMapSection.classList.remove(
+        "hidden"
+    );
+
+
+    updateHospitalMapTexts();
+
+
+    const hospitalLat =
+        Number(
+            hospital.latitude
+        );
+
+
+    const hospitalLon =
+        Number(
+            hospital.longitude
+        );
+
+
+    const hospitalName =
+
+        currentLanguage === "ta"
+
+            ? (
+
+                hospital.hospital_name_ta ||
+
+                hospital.hospital_name ||
+
+                "Hospital"
+
+            )
+
+            : (
+
+                hospital.hospital_name ||
+
+                "Hospital"
+
+            );
+
+
+    hospitalMapTitle.textContent =
+        hospitalName;
+
+
+    if (
+
+        Number.isNaN(
+            hospitalLat
+        )
+
+        ||
+
+        Number.isNaN(
+            hospitalLon
+        )
+
+    ) {
+
+        hospitalMapInfo.innerHTML = `
+
+            <div class="location-pin-icon">
+                ●
+            </div>
+
+
+            <div>
+
+                <span
+                    class="location-label"
+                >
+                    ${escapeHtml(
+                        t("hospital")
+                    )}
+                </span>
+
+
+                <span
+                    class="location-value"
+                >
+                    ${escapeHtml(
+                        t("noCoordinates")
+                    )}
+                </span>
+
+            </div>
+
+        `;
+
+
+        return;
+    }
+
+
+    if (
+
+        latitude === null ||
+
+        longitude === null
+
+    ) {
+
+        hospitalMapInfo.innerHTML = `
+
+            <div>
+
+                <span
+                    class="location-value"
+                >
+
+                    ${escapeHtml(
+                        t("locationError")
+                    )}
+
+                </span>
+
+            </div>
+
+        `;
+
+
+        return;
+    }
+
+
+    hideRouteDetails();
+
+
+    showRouteStatus(
+        t("calculatingRoute"),
+        false
+    );
+
+
+    setTimeout(
+        () => {
+
+            setupHospitalMap(
+                hospital,
+                hospitalLat,
+                hospitalLon,
+                startLive
+            );
+
+        },
+        200
+    );
+}
+
+
+/* =========================================================
+   SETUP HOSPITAL MAP
+   ========================================================= */
+
+function setupHospitalMap(
+    hospital,
+    hospitalLat,
+    hospitalLon,
+    startLive
+) {
+
+    if (!hospitalMap) {
+
+        hospitalMap =
+            L.map(
+                "hospitalMap"
+            );
+
+
+        if (hasValidMapTilerKey() && L.maptiler) {
+
+            hospitalMapTilerLayer = L.maptiler.maptilerLayer({
+                apiKey: MAPTILER_API_KEY,
+                language: currentLanguage,
+                navigationControl: false,
+                geolocateControl: false,
+                scaleControl: false,
+                fullscreenControl: false,
+                terrainControl: false
+            }).addTo(
+                hospitalMap
+            );
+
+        }
+
+        else {
+
+            L.tileLayer(
+                "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                {
+                    attribution:
+                        "&copy; OpenStreetMap contributors"
+                }
+            ).addTo(
+                hospitalMap
+            );
+
+            showMapTilerKeyWarning();
+        }
+
+    }
+
+
+    hospitalMap.invalidateSize();
+
+
+    removeNavigationLayers();
+
+
+    userMapMarker =
+
+        L.circleMarker(
+            [
+                latitude,
+                longitude
+            ],
+            {
+
+                radius:
+                    9,
+
+                weight:
+                    3,
+
+                fillOpacity:
+                    0.95
+
+            }
+
+        ).addTo(
+            hospitalMap
+        );
+
+
+    userMapMarker.bindPopup(
+        `<strong>${escapeHtml(
+            t("yourLocation")
+        )}</strong>`
+    );
+
+
+    hospitalMapMarker =
+
+        L.marker(
+            [
+                hospitalLat,
+                hospitalLon
+            ]
+        )
+        .addTo(
+            hospitalMap
+        )
+        .bindPopup(
+            `<strong>${escapeHtml(
+                currentLanguage === "ta"
+                    ? (
+                        hospital.hospital_name_ta ||
+                        hospital.hospital_name
+                    )
+                    : hospital.hospital_name
+            )}</strong>`
+        );
+
+
+    hospitalMap.setView(
+        [
+            latitude,
+            longitude
+        ],
+        15
+    );
+
+
+    updateHospitalInfo(
+        hospital
+    );
+
+
+    calculateHospitalRoute(
+        hospitalLat,
+        hospitalLon,
+        startLive
+    );
+}
+
+
+/* =========================================================
+   CALCULATE OSRM ROUTE
+   ========================================================= */
+
+async function calculateHospitalRoute(
+    hospitalLat,
+    hospitalLon,
+    startLive = false
+) {
+
+    if (
+
+        latitude === null ||
+
+        longitude === null
+
+    ) {
+
+        showRouteStatus(
+            t("locationError"),
+            true
+        );
+
+        return;
+    }
+
+
+    const requestUrl =
+
+        `https://router.project-osrm.org/route/v1/driving/` +
+
+        `${longitude},${latitude};` +
+
+        `${hospitalLon},${hospitalLat}` +
+
+        `?overview=full&geometries=geojson&steps=true`;
+
+
+    try {
+
+        const response =
+            await fetch(
+                requestUrl
+            );
+
+
+        if (
+            !response.ok
+        ) {
+
+            throw new Error(
+                `OSRM HTTP ${response.status}`
+            );
+        }
+
+
+        const data =
+            await response.json();
+
+
+        if (
+
+            data.code !== "Ok"
+
+            ||
+
+            !data.routes
+
+            ||
+
+            !data.routes.length
+
+        ) {
+
+            showRouteStatus(
+                t("routeUnavailable"),
+                true
+            );
+
+            return;
+        }
+
+
+        const route =
+            data.routes[0];
+
+
+        lastRouteData =
+            route;
+
+
+        buildRouteGeometryCache(
+            route
+        );
+
+
+        drawRoute(
+            route
+        );
+
+
+        updateRouteSummaryFromRoute(
+            route
+        );
+
+
+        renderRouteSteps(
+            route
+        );
+
+
+        showRouteStatus(
+            t("routeReady"),
+            false
+        );
+
+
+        startNavigationBtn.classList.remove(
+            "hidden"
+        );
+
+
+        if (
+            startLive
+        ) {
+
+            setTimeout(
+                () => {
+
+                    startLiveNavigation();
+
+                },
+                300
+            );
+
+        }
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "OSRM error:",
+            error
+        );
+
+
+        showRouteStatus(
+            t("routeError"),
+            true
+        );
+
+    }
+}
+
+
+/* =========================================================
+   DRAW ROUTE
+   ========================================================= */
+
+function drawRoute(
+    route
+) {
+
+    if (
+        hospitalRouteLine
+    ) {
+
+        hospitalMap.removeLayer(
+            hospitalRouteLine
+        );
+
+    }
+
+
+    if (
+        hospitalRouteOutline
+    ) {
+
+        hospitalMap.removeLayer(
+            hospitalRouteOutline
+        );
+
+    }
+
+
+    hospitalRouteOutline =
+
+        L.geoJSON(
+            route.geometry,
+            {
+
+                style: {
+
+                    weight:
+                        10,
+
+                    opacity:
+                        0.25,
+
+                    color:
+                        "#d5c68d",
+
+                    lineCap:
+                        "round",
+
+                    lineJoin:
+                        "round"
+
+                }
+
+            }
+        ).addTo(
+            hospitalMap
+        );
+
+
+    hospitalRouteLine =
+
+        L.geoJSON(
+            route.geometry,
+            {
+
+                style: {
+
+                    weight:
+                        5,
+
+                    opacity:
+                        0.95,
+
+                    color:
+                        "#707b5c",
+
+                    lineCap:
+                        "round",
+
+                    lineJoin:
+                        "round"
+
+                }
+
+            }
+        ).addTo(
+            hospitalMap
+        );
+
+
+    const bounds =
+        hospitalRouteLine.getBounds();
+
+
+    if (
+        bounds.isValid()
+    ) {
+
+        hospitalMap.fitBounds(
+            bounds,
+            {
+                padding:
+                    [
+                        45,
+                        45
+                    ]
+            }
+        );
+
+    }
+}
+
+
+/* =========================================================
+   ROUTE GEOMETRY CACHE
+   ========================================================= */
+
+function buildRouteGeometryCache(
+    route
+) {
+
+    routeGeometry = [];
+
+    routeCoordinateDistances = [];
+
+
+    if (
+
+        !route.geometry
+
+        ||
+
+        !route.geometry.coordinates
+
+    ) {
+
+        return;
+    }
+
+
+    const coordinates =
+        route.geometry.coordinates;
+
+
+    let cumulative =
+        0;
+
+
+    coordinates.forEach(
+        (coordinate, index) => {
+
+            const point = {
+
+                lat:
+                    coordinate[1],
+
+                lon:
+                    coordinate[0]
+
+            };
+
+
+            routeGeometry.push(
+                point
+            );
+
+
+            if (
+                index === 0
+            ) {
+
+                routeCoordinateDistances.push(
+                    0
+                );
+
+            }
+
+            else {
+
+                const previous =
+                    routeGeometry[
+                        index - 1
+                    ];
+
+
+                cumulative +=
+
+                    haversineKm(
+                        previous.lat,
+                        previous.lon,
+                        point.lat,
+                        point.lon
+                    );
+
+
+                routeCoordinateDistances.push(
+                    cumulative
+                );
+
+            }
+
+        }
+    );
+
+
+    routeTotalGeometryDistance =
+        cumulative;
+}
+
+
+/* =========================================================
+   RESET ROUTE GEOMETRY
+   ========================================================= */
+
+function resetRouteGeometry() {
+
+    routeGeometry = [];
+
+    routeCoordinateDistances = [];
+
+    routeTotalGeometryDistance = 0;
+
+    currentRouteStepIndex = 0;
+
+    spokenSteps.clear();
+}
+
+
+/* =========================================================
+   START LIVE NAVIGATION
+   ========================================================= */
+
+async function startLiveNavigation() {
+
+    if (
+        navigationActive
+    ) {
+
+        return;
+    }
+
+
+    if (
+        !navigator.geolocation
+    ) {
+
+        showRouteStatus(
+            t("locationError"),
+            true
+        );
+
+        return;
+    }
+
+
+    if (
+        !selectedHospitalForMap
+    ) {
+
+        return;
+    }
+
+
+    navigationActive =
+        true;
+
+
+    startNavigationBtn.classList.add(
+        "hidden"
+    );
+
+
+    stopNavigationBtn.classList.remove(
+        "hidden"
+    );
+
+
+    liveBadge.classList.remove(
+        "hidden"
+    );
+
+
+    navigationStatus.classList.add(
+        "active"
+    );
+
+
+    navigationStatusText.textContent =
+        t(
+            "requestingGps"
+        );
+
+
+    assistantStatus.textContent =
+        t(
+            "liveGpsActive"
+        );
+
+
+    spokenSteps.clear();
+
+
+    currentRouteStepIndex = 0;
+
+
+    await requestWakeLock();
+
+
+    navigationWatchId =
+
+        navigator.geolocation.watchPosition(
+
+            handleLivePosition,
+
+            handleLivePositionError,
+
+            {
+
+                enableHighAccuracy:
+                    true,
+
+                maximumAge:
+                    2000,
+
+                timeout:
+                    15000
+
+            }
+
+        );
+
+
+    speakText(
+        currentLanguage === "ta"
+            ? "நேரடி வழிசெலுத்தல் தொடங்கப்பட்டது"
+            : "Live navigation started"
+    );
+}
+
+
+/* =========================================================
+   STOP LIVE NAVIGATION
+   ========================================================= */
+
+function stopLiveNavigation() {
+
+    if (
+        navigationWatchId !== null
+    ) {
+
+        navigator.geolocation.clearWatch(
+            navigationWatchId
+        );
+
+
+        navigationWatchId =
+            null;
+    }
+
+
+    navigationActive =
+        false;
+
+
+    startNavigationBtn.classList.remove(
+        "hidden"
+    );
+
+
+    stopNavigationBtn.classList.add(
+        "hidden"
+    );
+
+
+    liveBadge.classList.add(
+        "hidden"
+    );
+
+
+    navigationStatus.classList.remove(
+        "active"
+    );
+
+
+    if (
+        navigationStatusText
+    ) {
+
+        navigationStatusText.textContent =
+            t(
+                "navigationStopped"
+            );
+
+    }
+
+
+    assistantStatus.textContent =
+        t(
+            "ready"
+        );
+
+
+    releaseWakeLock();
+
+
+    if (
+        navigationAnimationFrame
+    ) {
+
+        cancelAnimationFrame(
+            navigationAnimationFrame
+        );
+
+        navigationAnimationFrame =
+            null;
+
+    }
+}
+
+
+/* =========================================================
+   LIVE POSITION
+   ========================================================= */
+
+function handleLivePosition(
+    position
+) {
+
+    const newLatitude =
+        position.coords.latitude;
+
+
+    const newLongitude =
+        position.coords.longitude;
+
+
+    const accuracy =
+        Number(
+            position.coords.accuracy
+        );
+
+
+    const speed =
+        Number(
+            position.coords.speed
+        );
+
+
+    latitude =
+        newLatitude;
+
+
+    longitude =
+        newLongitude;
+
+
+    /* ---------------------------------------------
+       UPDATE USER MARKER
+       --------------------------------------------- */
+
+    if (
+        userMapMarker
+    ) {
+
+        userMapMarker.setLatLng(
+            [
+                newLatitude,
+                newLongitude
+            ]
+        );
+
+    }
+
+
+    /* ---------------------------------------------
+       NAV STATUS
+       --------------------------------------------- */
+
+    navigationStatusText.textContent =
+        t(
+            "liveGpsActive"
+        );
+
+
+    /* ---------------------------------------------
+       SPEED
+       --------------------------------------------- */
+
+    if (
+        Number.isFinite(
+            speed
+        )
+        &&
+        speed >= 0
+    ) {
+
+        routeSpeed.textContent =
+
+            `${(
+                speed * 3.6
+            ).toFixed(1)} km/h`;
+
+    }
+
+    else {
+
+        routeSpeed.textContent =
+            "--";
+
+    }
+
+
+    /* ---------------------------------------------
+       GPS ACCURACY
+       --------------------------------------------- */
+
+    if (
+        Number.isFinite(
+            accuracy
+        )
+    ) {
+
+        routeAccuracy.textContent =
+
+            `${Math.round(
+                accuracy
+            )} m`;
+
+    }
+
+    else {
+
+        routeAccuracy.textContent =
+            "--";
+
+    }
+
+
+    /* ---------------------------------------------
+       MAP FOLLOW
+       --------------------------------------------- */
+
+    if (
+        hospitalMap
+    ) {
+
+        const currentZoom =
+            Math.max(
+                hospitalMap.getZoom(),
+                16
+            );
+
+
+        if (
+            navigationActive
+        ) {
+
+            hospitalMap.setView(
+
+                [
+                    newLatitude,
+                    newLongitude
+                ],
+
+                currentZoom,
+
+                {
+                    animate:
+                        true
+                }
+
+            );
+
+        }
+
+    }
+
+
+    /* ---------------------------------------------
+       ROUTE POSITION
+       --------------------------------------------- */
+
+    const routePosition =
+        findClosestRoutePosition(
+            newLatitude,
+            newLongitude
+        );
+
+
+    if (
+        routePosition
+    ) {
+
+        const remainingDistance =
+
+            Math.max(
+
+                0,
+
+                routeTotalGeometryDistance -
+
+                routePosition.distanceAlongKm
+
+            );
+
+
+        updateRemainingRoute(
+            remainingDistance
+        );
+
+
+        updateCurrentManeuver(
+            newLatitude,
+            newLongitude
+        );
+
+
+        /* -----------------------------------------
+           OFF ROUTE DETECTION
+           ----------------------------------------- */
+
+        if (
+
+            routePosition.distanceFromRouteKm >
+
+            0.07
+
+        ) {
+
+            requestRerouteIfAllowed();
+
+        }
+
+
+        /* -----------------------------------------
+           ARRIVAL
+           ----------------------------------------- */
+
+        if (
+
+            selectedHospitalForMap
+
+            &&
+
+            Number.isFinite(
+                Number(
+                    selectedHospitalForMap.latitude
+                )
+            )
+
+            &&
+
+            Number.isFinite(
+                Number(
+                    selectedHospitalForMap.longitude
+                )
+            )
+
+        ) {
+
+            const hospitalDistance =
+
+                haversineKm(
+
+                    newLatitude,
+
+                    newLongitude,
+
+                    Number(
+                        selectedHospitalForMap.latitude
+                    ),
+
+                    Number(
+                        selectedHospitalForMap.longitude
+                    )
+
+                );
+
+
+            if (
+                hospitalDistance <= 0.05
+            ) {
+
+                handleArrival();
+
+            }
+
+        }
+
+    }
+
+
+    /* ---------------------------------------------
+       ACCURACY WARNING
+       --------------------------------------------- */
+
+    if (
+
+        Number.isFinite(
+            accuracy
+        )
+
+        &&
+
+        accuracy > 80
+
+    ) {
+
+        showRouteStatus(
+
+            currentLanguage === "ta"
+
+                ? "GPS துல்லியம் குறைவாக உள்ளது"
+
+                : "GPS accuracy is currently low.",
+
+            false
+
+        );
+
+    }
+
+    else {
+
+        hideRouteStatus();
+
+    }
+
+}
+
+
+/* =========================================================
+   LIVE POSITION ERROR
+   ========================================================= */
+
+function handleLivePositionError(
+    error
+) {
+
+    console.error(
+        "Live GPS error:",
+        error
+    );
+
+
+    navigationStatusText.textContent =
+
+        currentLanguage === "ta"
+
+            ? "GPS இருப்பிடத்தைப் பெற முடியவில்லை"
+
+            : "Unable to get live GPS position";
+
+
+    showRouteStatus(
+        t("locationError"),
+        true
+    );
+
+}
+
+
+/* =========================================================
+   REROUTE
+   ========================================================= */
+
+function requestRerouteIfAllowed() {
+
+    const now =
+        Date.now();
+
+
+    /*
+     * Avoid sending too many routing requests.
+     * Minimum 15 seconds between reroutes.
+     */
+
+    if (
+        now -
+        lastRerouteTime <
+        15000
+    ) {
+
+        return;
+    }
+
+
+    if (
+        !selectedHospitalForMap
+    ) {
+
+        return;
+    }
+
+
+    lastRerouteTime =
+        now;
+
+
+    navigationStatusText.textContent =
+        t(
+            "rerouting"
+        );
+
+
+    showRouteStatus(
+        t("rerouting"),
+        false
+    );
+
+
+    const hospitalLat =
+        Number(
+            selectedHospitalForMap.latitude
+        );
+
+
+    const hospitalLon =
+        Number(
+            selectedHospitalForMap.longitude
+        );
+
+
+    calculateHospitalRoute(
+        hospitalLat,
+        hospitalLon,
+        false
+    );
+}
+
+
+/* =========================================================
+   CLOSE MAP / NAV
+   ========================================================= */
+
+function closeHospitalMap() {
+
+    stopLiveNavigation();
+
+
+    hospitalMapSection.classList.add(
+        "hidden"
+    );
+
+
+    selectedHospitalForMap =
+        null;
+
+
+    lastRouteData =
+        null;
+
+
+    resetRouteGeometry();
+
+
+    hideRouteDetails();
+
+
+    removeNavigationLayers();
+}
+
+
+closeHospitalMapBtn.addEventListener(
+    "click",
+    closeHospitalMap
+);
+
+
+/* =========================================================
+   START BUTTON
+   ========================================================= */
+
+startNavigationBtn.addEventListener(
+    "click",
+    startLiveNavigation
+);
+
+
+/* =========================================================
+   STOP BUTTON
+   ========================================================= */
+
+stopNavigationBtn.addEventListener(
+    "click",
+    () => {
+
+        stopLiveNavigation();
+
+        hideRouteStatus();
+
+    }
+);
+
+
+/* =========================================================
+   ROUTE POSITION
+   ========================================================= */
+
+function findClosestRoutePosition(
+    userLat,
+    userLon
+) {
+
+    if (
+        routeGeometry.length < 2
+    ) {
+
+        return null;
+    }
+
+
+    let bestDistanceKm =
+        Infinity;
+
+
+    let bestAlongKm =
+        0;
+
+
+    for (
+        let i = 0;
+        i < routeGeometry.length - 1;
+        i++
+    ) {
+
+        const a =
+            routeGeometry[i];
+
+
+        const b =
+            routeGeometry[
+                i + 1
+            ];
+
+
+        const segmentLength =
+            haversineKm(
+                a.lat,
+                a.lon,
+                b.lat,
+                b.lon
+            );
+
+
+        if (
+            segmentLength === 0
+        ) {
+
+            continue;
+        }
+
+
+        const projection =
+            projectPointOnSegment(
+                userLat,
+                userLon,
+                a.lat,
+                a.lon,
+                b.lat,
+                b.lon
+            );
+
+
+        const projectedDistance =
+            haversineKm(
+                userLat,
+                userLon,
+                projection.lat,
+                projection.lon
+            );
+
+
+        if (
+            projectedDistance <
+            bestDistanceKm
+        ) {
+
+            bestDistanceKm =
+                projectedDistance;
+
+
+            bestAlongKm =
+
+                routeCoordinateDistances[i]
+
+                +
+
+                segmentLength *
+                projection.factor;
+        }
+
+    }
+
+
+    return {
+
+        distanceFromRouteKm:
+            bestDistanceKm,
+
+        distanceAlongKm:
+            bestAlongKm
+
+    };
+}
+
+
+/* =========================================================
+   PROJECT POINT TO SEGMENT
+   ========================================================= */
+
+function projectPointOnSegment(
+    pLat,
+    pLon,
+    aLat,
+    aLon,
+    bLat,
+    bLon
+) {
+
+    const latitudeScale =
+        Math.cos(
+            pLat *
+            Math.PI /
+            180
+        );
+
+
+    const ax =
+        aLon *
+        latitudeScale;
+
+
+    const ay =
+        aLat;
+
+
+    const bx =
+        bLon *
+        latitudeScale;
+
+
+    const by =
+        bLat;
+
+
+    const px =
+        pLon *
+        latitudeScale;
+
+
+    const py =
+        pLat;
+
+
+    const dx =
+        bx - ax;
+
+
+    const dy =
+        by - ay;
+
+
+    const denominator =
+        dx * dx +
+        dy * dy;
+
+
+    if (
+        denominator === 0
+    ) {
+
+        return {
+
+            lat:
+                aLat,
+
+            lon:
+                aLon,
+
+            factor:
+                0
+
+        };
+    }
+
+
+    let factor =
+
+        (
+            (px - ax) * dx +
+
+            (py - ay) * dy
+
+        )
+
+        /
+
+        denominator;
+
+
+    factor =
+        Math.max(
+            0,
+            Math.min(
+                1,
+                factor
+            )
+        );
+
+
+    return {
+
+        lat:
+            aLat +
+            (bLat - aLat) *
+            factor,
+
+        lon:
+            aLon +
+            (bLon - aLon) *
+            factor,
+
+        factor:
+            factor
+
+    };
+}
+
+
+/* =========================================================
+   REMAINING ROUTE
+   ========================================================= */
+
+function updateRemainingRoute(
+    remainingKm
+) {
+
+    routeSummary.classList.remove(
+        "hidden"
+    );
+
+
+    routeDistance.textContent =
+
+        `${remainingKm.toFixed(1)} ${t("km")}`;
+
+
+    if (
+        lastRouteData
+    ) {
+
+        const routeDistance =
+            Number(
+                lastRouteData.distance
+            );
+
+
+        const routeDuration =
+            Number(
+                lastRouteData.duration
+            );
+
+
+        if (
+
+            routeDistance > 0
+
+            &&
+
+            routeDuration > 0
+
+        ) {
+
+            const secondsRemaining =
+
+                routeDuration *
+                (
+                    remainingKm * 1000
+                ) /
+                routeDistance;
+
+
+            routeDuration.textContent =
+
+                formatDuration(
+                    secondsRemaining /
+                    60
+                );
+
+        }
+
+    }
+
+}
+
+
+/* =========================================================
+   ROUTE SUMMARY
+   ========================================================= */
+
+function updateRouteSummaryFromRoute(
+    route
+) {
+
+    routeSummary.classList.remove(
+        "hidden"
+    );
+
+
+    const distanceKm =
+
+        Number(
+            route.distance
+        ) /
+
+        1000;
+
+
+    const durationMinutes =
+
+        Number(
+            route.duration
+        ) /
+
+        60;
+
+
+    routeDistance.textContent =
+
+        `${distanceKm.toFixed(1)} ${t("km")}`;
+
+
+    routeDuration.textContent =
+
+        formatDuration(
+            durationMinutes
+        );
+
+
+    routeSpeed.textContent =
+        "--";
+
+
+    routeAccuracy.textContent =
+        "--";
+
+
+    routeDistanceLabel.textContent =
+        t(
+            "routeDistance"
+        );
+
+
+    routeDurationLabel.textContent =
+        t(
+            "estimatedTime"
+        );
+
+
+    routeSpeedLabel.textContent =
+        t(
+            "currentSpeed"
+        );
+
+
+    routeAccuracyLabel.textContent =
+        t(
+            "gpsAccuracy"
+        );
+
+}
+
+
+/* =========================================================
+   MANEUVER
+   ========================================================= */
+
+function updateCurrentManeuver(
+    userLat,
+    userLon
+) {
+
+    if (
+
+        !lastRouteData
+
+        ||
+
+        !lastRouteData.legs
+
+        ||
+
+        !lastRouteData.legs.length
+
+    ) {
+
+        return;
+    }
+
+
+    const steps =
+        lastRouteData.legs[0].steps || [];
+
+
+    if (
+        !steps.length
+    ) {
+
+        return;
+    }
+
+
+    let nextIndex =
+        currentRouteStepIndex;
+
+
+    while (
+        nextIndex <
+        steps.length
+    ) {
+
+        const step =
+            steps[
+                nextIndex
+            ];
+
+
+        if (
+
+            !step.maneuver
+
+            ||
+
+            !step.maneuver.location
+
+        ) {
+
+            nextIndex++;
+
+            continue;
+        }
+
+
+        const maneuverLat =
+            Number(
+                step.maneuver.location[1]
+            );
+
+
+        const maneuverLon =
+            Number(
+                step.maneuver.location[0]
+            );
+
+
+        const distanceToManeuver =
+
+            haversineKm(
+
+                userLat,
+
+                userLon,
+
+                maneuverLat,
+
+                maneuverLon
+
+            );
+
+
+        if (
+            distanceToManeuver >
+            0.03
+        ) {
+
+            break;
+        }
+
+
+        nextIndex++;
+    }
+
+
+    currentRouteStepIndex =
+        Math.min(
+            nextIndex,
+            steps.length - 1
+        );
+
+
+    const nextStep =
+        steps[
+            currentRouteStepIndex
+        ];
+
+
+    if (
+        !nextStep
+    ) {
+
+        nextManeuver.classList.add(
+            "hidden"
+        );
+
+        return;
+    }
+
+
+    const maneuver =
+        nextStep.maneuver || {};
+
+
+    const maneuverLocation =
+        maneuver.location || null;
+
+
+    if (
+        !maneuverLocation
+    ) {
+
+        return;
+    }
+
+
+    const maneuverLat =
+        Number(
+            maneuverLocation[1]
+        );
+
+
+    const maneuverLon =
+        Number(
+            maneuverLocation[0]
+        );
+
+
+    const distanceKm =
+
+        haversineKm(
+
+            userLat,
+
+            userLon,
+
+            maneuverLat,
+
+            maneuverLon
+
+        );
+
+
+    nextManeuver.classList.remove(
+        "hidden"
+    );
+
+
+    nextManeuverLabel.textContent =
+        t(
+            "next"
+        );
+
+
+    nextManeuverText.textContent =
+        createRouteInstruction(
+            nextStep,
+            nextIndex
+        );
+
+
+    nextManeuverDistance.textContent =
+        formatDistance(
+            distanceKm
+        );
+
+
+    updateManeuverIcon(
+        maneuver
+    );
+
+
+    /*
+     * Voice instruction once as
+     * the user approaches the maneuver.
+     */
+
+    if (
+
+        distanceKm <= 0.15
+
+        &&
+
+        !spokenSteps.has(
+            currentRouteStepIndex
+        )
+
+    ) {
+
+        spokenSteps.add(
+            currentRouteStepIndex
+        );
+
+
+        speakText(
+            createRouteInstruction(
+                nextStep,
+                nextIndex
+            )
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   MANEUVER ICON
+   ========================================================= */
+
+function updateManeuverIcon(
+    maneuver
+) {
+
+    const modifier =
+        String(
+            maneuver.modifier || ""
+        ).toLowerCase();
+
+
+    const type =
+        String(
+            maneuver.type || ""
+        ).toLowerCase();
+
+
+    if (
+        type === "arrive"
+    ) {
+
+        nextManeuverIcon.textContent =
+            "🏥";
+
+        return;
+    }
+
+
+    if (
+        type === "roundabout"
+        ||
+        type === "rotary"
+    ) {
+
+        nextManeuverIcon.textContent =
+            "⟳";
+
+        return;
+    }
+
+
+    if (
+        modifier.includes(
+            "left"
+        )
+    ) {
+
+        nextManeuverIcon.textContent =
+            "↰";
+
+        return;
+    }
+
+
+    if (
+        modifier.includes(
+            "right"
+        )
+    ) {
+
+        nextManeuverIcon.textContent =
+            "↱";
+
+        return;
+    }
+
+
+    nextManeuverIcon.textContent =
+        "↑";
+}
+
+
+/* =========================================================
+   ROUTE STEPS
+   ========================================================= */
+
+function renderRouteSteps(
+    route
+) {
+
+    routeSteps.innerHTML = "";
+
+
+    routeStepsSection.classList.remove(
+        "hidden"
+    );
+
+
+    routeStepsTitle.textContent =
+        t(
+            "routeSteps"
+        );
+
+
+    if (
+
+        !route.legs
+
+        ||
+
+        !route.legs.length
+
+    ) {
+
+        return;
+    }
+
+
+    const steps =
+        route.legs[0].steps || [];
+
+
+    steps.forEach(
+        (step, index) => {
+
+            const item =
+                document.createElement(
+                    "div"
+                );
+
+
+            item.className =
+                "route-step";
+
+
+            item.dataset.stepIndex =
+                index;
+
+
+            const stepDistance =
+                Number(
+                    step.distance
+                );
+
+
+            const distanceText =
+                formatDistanceMeters(
+                    stepDistance
+                );
+
+
+            const streetName =
+                step.name || "";
+
+
+            const instruction =
+                createRouteInstruction(
+                    step,
+                    index
+                );
+
+
+            item.innerHTML = `
+
+                <div
+                    class="step-number"
+                >
+                    ${index + 1}
+                </div>
+
+
+                <div
+                    class="step-content"
+                >
+
+                    <div
+                        class="step-instruction"
+                    >
+
+                        ${escapeHtml(
+                            instruction
+                        )}
+
+                    </div>
+
+
+                    <div
+                        class="step-meta"
+                    >
+
+                        ${escapeHtml(
+                            distanceText
+                        )}
+
+                        ${
+                            streetName
+                                ? " • " +
+                                  escapeHtml(
+                                      streetName
+                                  )
+                                : ""
+                        }
+
+                    </div>
+
+                </div>
+
+            `;
+
+
+            routeSteps.appendChild(
+                item
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   ROUTE INSTRUCTION
+   ========================================================= */
+
+function createRouteInstruction(
+    step,
+    index
+) {
+
+    const maneuver =
+        step.maneuver || {};
+
+
+    const type =
+        String(
+            maneuver.type || ""
+        ).toLowerCase();
+
+
+    const modifier =
+        String(
+            maneuver.modifier || ""
+        ).toLowerCase();
+
+
+    if (
+        currentLanguage === "ta"
+    ) {
+
+        if (
+            type === "arrive"
+        ) {
+
+            return "மருத்துவமனையை அடைகிறீர்கள்";
+        }
+
+
+        if (
+            type === "depart"
+        ) {
+
+            return "பயணத்தைத் தொடங்குங்கள்";
+        }
+
+
+        if (
+            type === "roundabout"
+            ||
+            type === "rotary"
+        ) {
+
+            return "சுற்றுச்சாலையில் செல்லுங்கள்";
+        }
+
+
+        if (
+            modifier.includes(
+                "slight left"
+            )
+        ) {
+
+            return "சிறிது இடப்புறமாக செல்லுங்கள்";
+        }
+
+
+        if (
+            modifier.includes(
+                "slight right"
+            )
+        ) {
+
+            return "சிறிது வலப்புறமாக செல்லுங்கள்";
+        }
+
+
+        if (
+            modifier.includes(
+                "left"
+            )
+        ) {
+
+            return "இடப்புறம் திரும்புங்கள்";
+        }
+
+
+        if (
+            modifier.includes(
+                "right"
+            )
+        ) {
+
+            return "வலப்புறம் திரும்புங்கள்";
+        }
+
+
+        return "தொடர்ந்து செல்லுங்கள்";
+    }
+
+
+    if (
+        type === "arrive"
+    ) {
+
+        return "Arrive at the hospital";
+    }
+
+
+    if (
+        type === "depart"
+    ) {
+
+        return "Start your journey";
+    }
+
+
+    if (
+        type === "roundabout"
+        ||
+        type === "rotary"
+    ) {
+
+        return "Enter the roundabout";
+    }
+
+
+    if (
+        modifier.includes(
+            "slight left"
+        )
+    ) {
+
+        return "Keep slightly left";
+    }
+
+
+    if (
+        modifier.includes(
+            "slight right"
+        )
+    ) {
+
+        return "Keep slightly right";
+    }
+
+
+    if (
+        modifier.includes(
+            "left"
+        )
+    ) {
+
+        return "Turn left";
+    }
+
+
+    if (
+        modifier.includes(
+            "right"
+        )
+    ) {
+
+        return "Turn right";
+    }
+
+
+    return "Continue";
+}
+
+
+/* =========================================================
+   HOSPITAL INFO
+   ========================================================= */
+
+function updateHospitalInfo(
+    hospital
+) {
+
+    const hospitalName =
+
+        currentLanguage === "ta"
+
+            ? (
+
+                hospital.hospital_name_ta ||
+
+                hospital.hospital_name ||
+
+                "Hospital"
+
+            )
+
+            : (
+
+                hospital.hospital_name ||
+
+                "Hospital"
+
+            );
+
+
+    let distanceValue =
+
+        hospital.distance_km ??
+
+        hospital.distance ??
+
+        0;
+
+
+    distanceValue =
+        Number(
+            distanceValue
+        );
+
+
+    hospitalMapInfo.innerHTML = `
+
+        <div class="location-pin-icon">
+            ●
+        </div>
+
+
+        <div>
+
+            <span
+                class="location-label"
+            >
+
+                ${escapeHtml(
+                    t("hospital")
+                )}
+
+            </span>
+
+
+            <span
+                class="location-value"
+            >
+
+                ${escapeHtml(
+                    hospitalName
+                )}
+
+            </span>
+
+
+            <span
+                class="location-distance"
+            >
+
+                ${
+                    currentLanguage === "ta"
+                        ? "பரிந்துரைக்கப்பட்ட தூரம்"
+                        : "Recommendation distance"
+                }:
+
+                ${
+                    Number.isNaN(
+                        distanceValue
+                    )
+                        ? "-"
+                        : `${distanceValue.toFixed(2)} ${t("km")}`
+                }
+
+            </span>
+
+        </div>
+
+    `;
+}
+
+
+/* =========================================================
+   FORMAT DISTANCE
+   ========================================================= */
+
+function formatDistance(
+    distanceKm
+) {
+
+    if (
+        distanceKm < 1
+    ) {
+
+        return `${Math.round(
+            distanceKm * 1000
+        )} m`;
+
+    }
+
+
+    return `${distanceKm.toFixed(
+        1
+    )} ${t("km")}`;
+}
+
+
+function formatDistanceMeters(
+    meters
+) {
+
+    const value =
+        Number(
+            meters
+        );
+
+
+    if (
+        value >= 1000
+    ) {
+
+        return `${(
+            value / 1000
+        ).toFixed(1)} ${t("km")}`;
+
+    }
+
+
+    return `${Math.round(
+        value
+    )} m`;
+}
+
+
+/* =========================================================
+   DURATION
+   ========================================================= */
+
+function formatDuration(
+    minutes
+) {
+
+    minutes =
+        Math.round(
+            Number(
+                minutes
+            )
+        );
+
+
+    if (
+        Number.isNaN(
+            minutes
+        )
+    ) {
+
+        return "--";
+    }
+
+
+    if (
+        minutes < 60
+    ) {
+
+        return currentLanguage === "ta"
+
+            ? `${minutes} நிமிடம்`
+
+            : `${minutes} min`;
+
+    }
+
+
+    const hours =
+        Math.floor(
+            minutes / 60
+        );
+
+
+    const remaining =
+        minutes % 60;
+
+
+    if (
+        currentLanguage === "ta"
+    ) {
+
+        if (
+            remaining === 0
+        ) {
+
+            return `${hours} மணி`;
+
+        }
+
+
+        return `${hours} மணி ${remaining} நிமிடம்`;
+
+    }
+
+
+    if (
+        remaining === 0
+    ) {
+
+        return `${hours} hr`;
+    }
+
+
+    return `${hours} hr ${remaining} min`;
+}
+
+
+/* =========================================================
+   ARRIVAL
+   ========================================================= */
+
+function handleArrival() {
+
+    if (
+        !navigationActive
+    ) {
+
+        return;
+    }
+
+
+    stopLiveNavigation();
+
+
+    navigationStatus.classList.add(
+        "arrived"
+    );
+
+
+    navigationStatusText.textContent =
+        t(
+            "arrived"
+        );
+
+
+    showRouteStatus(
+        t("arrived"),
+        false
+    );
+
+
+    speakText(
+        t("arrived")
+    );
+
+
+    nextManeuverText.textContent =
+        t(
+            "arrived"
+        );
+
+
+    nextManeuverDistance.textContent =
+        "";
+}
+
+
+/* =========================================================
+   ROUTE STATUS
+   ========================================================= */
+
+function showRouteStatus(
+    text,
+    isError = false
+) {
+
+    if (!text) {
+
+        hideRouteStatus();
+
+        return;
+    }
+
+
+    routeStatus.classList.remove(
+        "hidden"
+    );
+
+
+    routeStatus.classList.toggle(
+        "route-error",
+        isError
+    );
+
+
+    routeStatus.textContent =
+        text;
+}
+
+
+function hideRouteStatus() {
+
+    routeStatus.classList.add(
+        "hidden"
+    );
+
+
+    routeStatus.classList.remove(
+        "route-error"
+    );
+
+
+    routeStatus.textContent =
+        "";
+}
+
+
+/* =========================================================
+   ROUTE DETAILS
+   ========================================================= */
+
+function hideRouteDetails() {
+
+    routeSummary.classList.add(
+        "hidden"
+    );
+
+
+    routeStepsSection.classList.add(
+        "hidden"
+    );
+
+
+    nextManeuver.classList.add(
+        "hidden"
+    );
+
+
+    routeSteps.innerHTML = "";
+
+
+    hideRouteStatus();
+
+
+    startNavigationBtn.classList.remove(
+        "hidden"
+    );
+
+
+    stopNavigationBtn.classList.add(
+        "hidden"
+    );
+
+
+    liveBadge.classList.add(
+        "hidden"
+    );
+}
+
+
+/* =========================================================
+   MAP LAYERS
+   ========================================================= */
+
+function removeNavigationLayers() {
+
+    if (
+        userMapMarker &&
+        hospitalMap
+    ) {
+
+        hospitalMap.removeLayer(
+            userMapMarker
+        );
+
+        userMapMarker =
+            null;
+    }
+
+
+    if (
+        hospitalMapMarker &&
+        hospitalMap
+    ) {
+
+        hospitalMap.removeLayer(
+            hospitalMapMarker
+        );
+
+        hospitalMapMarker =
+            null;
+    }
+
+
+    if (
+        hospitalRouteLine &&
+        hospitalMap
+    ) {
+
+        hospitalMap.removeLayer(
+            hospitalRouteLine
+        );
+
+        hospitalRouteLine =
+            null;
+    }
+
+
+    if (
+        hospitalRouteOutline &&
+        hospitalMap
+    ) {
+
+        hospitalMap.removeLayer(
+            hospitalRouteOutline
+        );
+
+        hospitalRouteOutline =
+            null;
+    }
+
+}
+
+
+/* =========================================================
+   WAKE LOCK
+   ========================================================= */
+
+async function requestWakeLock() {
+
+    if (
+        !("wakeLock" in navigator)
+    ) {
+
+        return;
+    }
+
+
+    try {
+
+        wakeLock =
+            await navigator.wakeLock.request(
+                "screen"
+            );
+
+    }
+
+    catch (error) {
+
+        console.log(
+            "Wake lock unavailable:",
+            error
+        );
+
+    }
+}
+
+
+function releaseWakeLock() {
+
+    if (
+        wakeLock
+    ) {
+
+        wakeLock.release()
+            .catch(
+                () => {}
+            );
+
+
+        wakeLock =
+            null;
+    }
+}
+
+
+/* =========================================================
+   VOICE
+   ========================================================= */
+
+function speakText(
+    text
+) {
+
+    if (
+        !window.speechSynthesis
+    ) {
+
+        return;
+    }
+
+
+    if (
+        !text
+    ) {
+
+        return;
+    }
+
+
+    window.speechSynthesis.cancel();
+
+
+    const utterance =
+        new SpeechSynthesisUtterance(
+            text
+        );
+
+
+    utterance.lang =
+
+        currentLanguage === "ta"
+
+            ? "ta-IN"
+
+            : "en-IN";
+
+
+    utterance.rate =
+        0.95;
+
+
+    utterance.pitch =
+        1;
+
+
+    window.speechSynthesis.speak(
+        utterance
+    );
+}
+
+
+/* =========================================================
+   LANGUAGE UPDATE
+   ========================================================= */
+
+function updateLanguageButtons() {
+
+    document
+        .getElementById(
+            "englishBtn"
+        )
+        .classList.toggle(
+
+            "active",
+
+            currentLanguage === "en"
+
+        );
+
+
+    document
+        .getElementById(
+            "tamilBtn"
+        )
+        .classList.toggle(
+
+            "active",
+
+            currentLanguage === "ta"
+
+        );
+}
+
+
+/* =========================================================
+   GOOGLE MAPS OPTION
+   ========================================================= */
+
+function googleMapsLanguageCode() {
+
+    return currentLanguage === "ta"
+        ? "ta"
+        : "en";
+}
+
+
+function openGoogleMapsAtLocation() {
+
+    if (
+        latitude === null ||
+        longitude === null
+    ) {
+        return;
+    }
+
+
+    const language =
+        googleMapsLanguageCode();
+
+
+    const url =
+        "https://www.google.com/maps/@?api=1" +
+        "&map_action=map" +
+        `&center=${encodeURIComponent(`${latitude},${longitude}`)}` +
+        "&zoom=16" +
+        "&basemap=roadmap" +
+        `&hl=${language}`;
+
+
+    window.open(
+        url,
+        "_blank",
+        "noopener,noreferrer"
+    );
+}
+
+
+function openGoogleMapsDirections(hospital) {
+
+    const hospitalLat =
+        Number(hospital?.latitude);
+
+
+    const hospitalLon =
+        Number(hospital?.longitude);
+
+
+    if (
+        Number.isNaN(hospitalLat) ||
+        Number.isNaN(hospitalLon) ||
+        latitude === null ||
+        longitude === null
+    ) {
+        return;
+    }
+
+
+    const language =
+        googleMapsLanguageCode();
+
+
+    const url =
+        "https://www.google.com/maps/dir/?api=1" +
+        `&origin=${encodeURIComponent(`${latitude},${longitude}`)}` +
+        `&destination=${encodeURIComponent(`${hospitalLat},${hospitalLon}`)}` +
+        "&travelmode=driving" +
+        `&hl=${language}`;
+
+
+    window.open(
+        url,
+        "_blank",
+        "noopener,noreferrer"
+    );
+}
+
+
+/* =========================================================
+   MAP LANGUAGE
+   ========================================================= */
+
+function hasValidMapTilerKey() {
+
+    return (
+        typeof MAPTILER_API_KEY === "string" &&
+        MAPTILER_API_KEY.trim() !== "" &&
+        MAPTILER_API_KEY !== "YOUR_MAPTILER_API_KEY_HERE"
+    );
+}
+
+
+function showMapTilerKeyWarning() {
+
+    if (hasValidMapTilerKey()) {
+        return;
+    }
+
+    const message = currentLanguage === "ta"
+        ? "தமிழ் வரைபடப் பெயர்களை இயக்க, index.html-ல் உங்கள் MapTiler API key-ஐ சேர்க்கவும். இப்போது OpenStreetMap fallback பயன்படுத்தப்படுகிறது."
+        : "Add your MapTiler API key in index.html to enable localized Tamil map labels. The map is currently using the OpenStreetMap fallback.";
+
+    console.warn(message);
+}
+
+
+function updateMapLanguage() {
+
+    const language =
+        currentLanguage === "ta"
+            ? "ta"
+            : "en";
+
+
+    if (mapTilerLayer && typeof mapTilerLayer.setLanguage === "function") {
+        mapTilerLayer.setLanguage(language);
+    }
+
+
+    if (hospitalMapTilerLayer && typeof hospitalMapTilerLayer.setLanguage === "function") {
+        hospitalMapTilerLayer.setLanguage(language);
+    }
+}
+
+
+function updateHospitalMapTexts() {
+
+    hospitalMapEyebrow.textContent =
+        t(
+            "liveNavigation"
+        );
+
+
+    hospitalMapInstruction.textContent =
+        t(
+            "routeInstruction"
+        );
+
+
+    routeDistanceLabel.textContent =
+        t(
+            "routeDistance"
+        );
+
+
+    routeDurationLabel.textContent =
+        t(
+            "estimatedTime"
+        );
+
+
+    routeSpeedLabel.textContent =
+        t(
+            "currentSpeed"
+        );
+
+
+    routeAccuracyLabel.textContent =
+        t(
+            "gpsAccuracy"
+        );
+
+
+    routeStepsTitle.textContent =
+        t(
+            "routeSteps"
+        );
+
+
+    nextManeuverLabel.textContent =
+        t(
+            "next"
+        );
+
+
+    startNavigationBtn.textContent =
+        t(
+            "startNavigation"
+        );
+
+
+    stopNavigationBtn.textContent =
+        t(
+            "stopNavigation"
+        );
+
+
+    openGoogleMapsBtn.textContent =
+        `🌐 ${t("googleMaps")}`;
+
+
+    if (
+        selectedHospitalForMap
+    ) {
+
+        updateHospitalInfo(
+            selectedHospitalForMap
+        );
+
+    }
+
+
+    if (
+        lastRouteData
+    ) {
+
+        updateRouteSummaryFromRoute(
+            lastRouteData
+        );
+
+
+        renderRouteSteps(
+            lastRouteData
+        );
+
+    }
+}
+
+
+/* =========================================================
+   DYNAMIC UI
+   ========================================================= */
+
+function updateDynamicUI() {
+
+    document.getElementById(
+        "brandTitle"
+    ).textContent =
+        t(
+            "brandTitle"
+        );
+
+
+    document.getElementById(
+        "brandSubtitle"
+    ).textContent =
+        t(
+            "brandSubtitle"
+        );
+
+
+    document.getElementById(
+        "assistantName"
+    ).textContent =
+        t(
+            "assistantName"
+        );
+
+
+    document.getElementById(
+        "footerAssistantName"
+    ).textContent =
+        t(
+            "assistantName"
+        );
+
+
+    document.getElementById(
+        "footerSystemName"
+    ).textContent =
+        t(
+            "footerSystem"
+        );
+
+
+    updateMapLanguage();
+
+
+    if (
+        !navigationActive
+    ) {
+
+        assistantStatus.textContent =
+            t(
+                "ready"
+            );
+
+    }
+
+
+    renderChat();
+
+
+    updateMapTexts();
+
+
+    if (
+        selectedHospitalForMap
+    ) {
+
+        updateHospitalMapTexts();
+
+    }
+
+
+    if (
+        !selectedCategory
+    ) {
+
+        showCategoryReplies();
+
+        return;
+    }
+
+
+    if (
+
+        latitude === null ||
+
+        longitude === null
+
+    ) {
+
+        showLocationReplies();
+
+        return;
+    }
+
+
+    if (
+        !selectedHospitalPreference
+    ) {
+
+        showHospitalPreference();
+
+        return;
+    }
+
+
+    showRestartButton();
+
+
+    if (
+        lastResults.length
+    ) {
+
+        renderResults(
+            lastResults
+        );
+
+    }
+}
+
+
+/* =========================================================
+   GOOGLE MAPS BUTTONS
+   ========================================================= */
+
+googleLocationBtn.addEventListener(
+    "click",
+    () => {
+
+        openGoogleMapsAtLocation();
+
+    }
+);
+
+
+openGoogleMapsBtn.addEventListener(
+    "click",
+    () => {
+
+        if (selectedHospitalForMap) {
+
+            openGoogleMapsDirections(
+                selectedHospitalForMap
+            );
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   LANGUAGE BUTTONS
+   ========================================================= */
+
+document
+    .getElementById(
+        "englishBtn"
+    )
+    .addEventListener(
+        "click",
+        () => {
+
+            currentLanguage =
+                "en";
+
+
+            updateLanguageButtons();
+
+            updateDynamicUI();
+
+        }
+    );
+
+
+document
+    .getElementById(
+        "tamilBtn"
+    )
+    .addEventListener(
+        "click",
+        () => {
+
+            currentLanguage =
+                "ta";
+
+
+            updateLanguageButtons();
+
+            updateDynamicUI();
+
+        }
+    );
+
+
+/* =========================================================
+   HAVERSINE
+   ========================================================= */
+
+function haversineKm(
+    lat1,
+    lon1,
+    lat2,
+    lon2
+) {
+
+    const R =
+        6371;
+
+
+    const dLat =
+        (
+            lat2 - lat1
+        ) *
+        Math.PI /
+        180;
+
+
+    const dLon =
+        (
+            lon2 - lon1
+        ) *
+        Math.PI /
+        180;
+
+
+    const a =
+
+        Math.sin(
+            dLat / 2
+        ) ** 2
+
+        +
+
+        Math.cos(
+            lat1 *
+            Math.PI /
+            180
+        )
+
+        *
+
+        Math.cos(
+            lat2 *
+            Math.PI /
+            180
+        )
+
+        *
+
+        Math.sin(
+            dLon / 2
+        ) ** 2;
+
+
+    const c =
+
+        2 *
+
+        Math.atan2(
+
+            Math.sqrt(a),
+
+            Math.sqrt(
+                1 - a
+            )
+
+        );
+
+
+    return R * c;
+}
+
+
+/* =========================================================
+   ESCAPE HTML
+   ========================================================= */
+
+function escapeHtml(
+    value
+) {
+
+    const div =
+        document.createElement(
+            "div"
+        );
+
+
+    div.textContent =
+        value ?? "";
+
+
+    return div.innerHTML;
+}
+
+
+/* =========================================================
+   START APP
+   ========================================================= */
+
+startConversation();
+
+</script>
+
+</body>
+
+</html>
