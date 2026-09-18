@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VITAL HEALTH NAV - Login</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        body.login-page {
+            min-height: 100vh;
+            display: grid;
+            place-items: center;
+            padding: 24px;
+            background:
+                radial-gradient(circle at top left, rgba(213, 198, 141, 0.35), transparent 35%),
+                linear-gradient(135deg, #f6f8fb 0%, #eef2e6 100%);
+        }
+
+        .login-shell {
+            width: min(100%, 460px);
+        }
+
+        .login-card {
+            background: #ffffff;
+            border: 1px solid #dfe5ec;
+            border-radius: 24px;
+            padding: 34px;
+            box-shadow: 0 18px 50px rgba(15, 23, 42, 0.10);
+            position: relative;
+        }
+
+        .login-language-switch {
+            display: flex;
+            justify-content: flex-end;
+            gap: 6px;
+            margin-bottom: 18px;
+        }
+
+        .login-lang-btn {
+            border: 1px solid #d9dfcc;
+            background: #f7f8f2;
+            color: #586545;
+            border-radius: 999px;
+            padding: 7px 12px;
+            font-size: 12px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: 0.2s ease;
+        }
+
+        .login-lang-btn:hover {
+            border-color: #9ca683;
+        }
+
+        .login-lang-btn.active {
+            background: #8f9a72;
+            border-color: #8f9a72;
+            color: #ffffff;
+        }
+
+        .login-brand {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 22px;
+        }
+
+        .login-brand-mark {
+            width: 48px;
+            height: 48px;
+            display: grid;
+            place-items: center;
+            border-radius: 14px;
+            background: #dfe6cf;
+            color: #52613b;
+            font-weight: 900;
+        }
+
+        .login-brand-text strong {
+            display: block;
+            font-size: 18px;
+            letter-spacing: 0.3px;
+        }
+
+        .login-brand-text span {
+            display: block;
+            margin-top: 2px;
+            color: #64748b;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .login-card h1 {
+            margin: 0;
+            font-size: 28px;
+            line-height: 1.2;
+        }
+
+        .login-card .login-subtitle {
+            margin: 10px 0 24px;
+            color: #64748b;
+            line-height: 1.55;
+        }
+
+        .login-label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 13px;
+            font-weight: 800;
+            color: #344054;
+        }
+
+        .login-input {
+            width: 100%;
+            border: 1px solid #d0d7e2;
+            border-radius: 12px;
+            padding: 13px 14px;
+            font: inherit;
+            outline: none;
+            transition: 0.2s ease;
+            box-sizing: border-box;
+        }
+
+        .login-input:focus {
+            border-color: #9ca683;
+            box-shadow: 0 0 0 3px rgba(156, 166, 131, 0.18);
+        }
+
+        .login-btn {
+            width: 100%;
+            margin-top: 14px;
+            border: 0;
+            border-radius: 12px;
+            padding: 14px 16px;
+            background: #8f9a72;
+            color: #ffffff;
+            font-weight: 800;
+            font-size: 15px;
+            cursor: pointer;
+        }
+
+        .login-btn:hover {
+            background: #7e8b60;
+        }
+
+        .login-error {
+            min-height: 20px;
+            margin: 8px 0 0;
+            color: #b42318;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .login-note {
+            margin: 20px 0 0;
+            padding-top: 16px;
+            border-top: 1px solid #edf0f4;
+            color: #64748b;
+            font-size: 13px;
+            line-height: 1.6;
+            white-space: pre-line;
+        }
+
+        .login-name-preview {
+            min-height: 18px;
+            margin: 7px 0 0;
+            color: #72805a;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        @media (max-width: 520px) {
+            body.login-page {
+                padding: 14px;
+            }
+
+            .login-card {
+                padding: 24px 20px;
+                border-radius: 20px;
+            }
+        }
+    </style>
+</head>
+<body class="login-page">
+
+<div class="login-shell">
+    <section class="login-card">
+
+        <div class="login-language-switch" aria-label="Language selection">
+            <button
+                id="englishBtn"
+                class="login-lang-btn active"
+                type="button"
+            >
+                English
+            </button>
+
+            <button
+                id="tamilBtn"
+                class="login-lang-btn"
+                type="button"
+            >
+                தமிழ்
+            </button>
+        </div>
+
+        <div class="login-brand">
+            <div class="login-brand-mark">VH</div>
+            <div class="login-brand-text">
+                <strong id="brandTitle">VITAL HEALTH NAV</strong>
+                <span id="brandAssistant">VH NAV ASSISTANT</span>
+            </div>
+        </div>
+
+        <h1 id="loginTitle">Welcome</h1>
+
+        <p id="loginSubtitle" class="login-subtitle">
+            Enter your name to start using VH NAV.
+        </p>
+
+        <form id="loginForm">
+            <label id="usernameLabel" class="login-label" for="username">
+                Username
+            </label>
+
+            <input
+                id="username"
+                class="login-input"
+                type="text"
+                placeholder="Enter your name"
+                autocomplete="name"
+                maxlength="50"
+                required
+            >
+
+            <p id="namePreview" class="login-name-preview" aria-live="polite"></p>
+
+            <p id="loginError" class="login-error" aria-live="polite"></p>
+
+            <button id="continueBtn" class="login-btn" type="submit">
+                Continue to VH NAV
+            </button>
+        </form>
+
+        <p id="loginNote" class="login-note">
+Self-care is how
+you take your
+power back❤️.
+        </p>
+
+    </section>
+</div>
+
+<script>
+const USERNAME_KEY = "vh_nav_username";
+const USERNAME_TAMIL_KEY = "vh_nav_username_ta";
+const LANGUAGE_KEY = "vh_nav_language";
+
+let currentLanguage =
+    sessionStorage.getItem(LANGUAGE_KEY) === "ta"
+        ? "ta"
+        : "en";
+
+const translations = {
+    en: {
+        brandTitle: "VITAL HEALTH NAV",
+        brandAssistant: "VH NAV ASSISTANT",
+        title: "Welcome",
+        subtitle: "Enter your name to start using VH NAV.",
+        username: "Username",
+        placeholder: "Enter your name",
+        button: "Continue to VH NAV",
+        error: "Please enter your name.",
+        tamilPreview: "Tamil name: {name}",
+        note: "Self-care is how you take your power back❤️."
+    },
+    ta: {
+        brandTitle: "வைடல் ஹெல்த் நெவ்",
+        brandAssistant: "VH நெவ் உதவியாளர்",
+        title: "வரவேற்கிறோம்",
+        subtitle: "VH NAV-ஐ பயன்படுத்த உங்கள் பெயரை உள்ளிடவும்.",
+        username: "பயனர் பெயர்",
+        placeholder: "உங்கள் பெயரை உள்ளிடவும்",
+        button: "VH NAV-க்கு தொடரவும்",
+        error: "உங்கள் பெயரை உள்ளிடவும்.",
+        tamilPreview: "தமிழ் பெயர்: {name}",
+        note: "சுய பராமரிப்பு என்பது உங்கள் ஆற்றலை மீண்டும் பெறுவதற்கான வழியாகும்❤️"
+    }
+};
+
+const englishNameTamilMap = {
+    "gayatri": "காயத்ரி",
+    "harshini": "ஹர்ஷினி",
+    "harshitha": "ஹர்ஷிதா",
+    "hannah": "ஹன்னா",
+    "gopika": "கோபிகா",
+    "divya": "திவ்யா",
+    "priya": "பிரியா",
+    "priya": "பிரியா",
+    "ananya": "அனன்யா",
+    "shruthi": "ஸ்ருதி",
+    "sruthi": "ஸ்ருதி",
+    "shreya": "ஷ்ரேயா",
+    "sneha": "ஸ்நேஹா",
+    "kavya": "காவ்யா",
+    "keerthana": "கீர்த்தனா",
+    "keerthi": "கீர்த்தி",
+    "pooja": "பூஜா",
+    "pavithra": "பவித்ரா",
+    "lavanya": "லாவண்யா",
+    "swetha": "ஸ்வேதா",
+    "vidhya": "வித்யா",
+    "vidya": "வித்யா",
+    "meena": "மீனா",
+    "meera": "மீரா",
+    "deepa": "தீபா",
+    "deepika": "தீபிகா",
+    "athira": "அதிரா",
+    "aishwarya": "ஐஸ்வர்யா",
+    "abhishek": "அபிஷேக்",
+    "arjun": "அர்ஜுன்",
+    "ashwin": "அஷ்வின்",
+    "karthik": "கார்த்திக்",
+    "rahul": "ராகுல்",
+    "rohit": "ரோஹித்",
+    "surya": "சூர்யா",
+    "vignesh": "விக்னேஷ்",
+    "vinoth": "வினோத்",
+    "vikram": "விக்ரம்",
+    "hari": "ஹரி",
+    "krishna": "கிருஷ்ணா",
+    "mohan": "மோகன்",
+    "ravi": "ரவி",
+    "sathish": "சதீஷ்",
+    "sanjay": "சஞ்சய்",
+    "siva": "சிவா",
+    "shiva": "சிவா"
+};
+
+const loginForm = document.getElementById("loginForm");
+const usernameInput = document.getElementById("username");
+const loginError = document.getElementById("loginError");
+const namePreview = document.getElementById("namePreview");
+
+function cleanName(value) {
+    return String(value || "")
+        .trim()
+        .replace(/\s+/g, " ");
+}
+
+function escapeHtml(value) {
+    const div = document.createElement("div");
+    div.textContent = String(value ?? "");
+    return div.innerHTML;
+}
+
+function transliterateSingleWordToTamil(word) {
+    const normalized = word.toLowerCase();
+
+    if (englishNameTamilMap[normalized]) {
+        return englishNameTamilMap[normalized];
+    }
+
+    return word;
+}
+
+function translateNameToTamil(name) {
+    const cleaned = cleanName(name);
+
+    if (!cleaned) {
+        return "";
+    }
+
+    return cleaned
+        .split(" ")
+        .map(transliterateSingleWordToTamil)
+        .join(" ");
+}
+
+function updateNamePreview() {
+    const englishName = cleanName(usernameInput.value);
+
+    if (currentLanguage !== "ta" || !englishName) {
+        namePreview.textContent = "";
+        return;
+    }
+
+    const tamilName = translateNameToTamil(englishName);
+
+    if (!tamilName) {
+        namePreview.textContent = "";
+        return;
+    }
+
+    namePreview.textContent = translations.ta.tamilPreview.replace(
+        "{name}",
+        tamilName
+    );
+}
+
+function updateLanguageButtons() {
+    document.getElementById("englishBtn").classList.toggle(
+        "active",
+        currentLanguage === "en"
+    );
+
+    document.getElementById("tamilBtn").classList.toggle(
+        "active",
+        currentLanguage === "ta"
+    );
+}
+
+function updateLoginLanguage() {
+    const lang = translations[currentLanguage];
+
+    document.documentElement.lang = currentLanguage === "ta" ? "ta" : "en";
+
+    document.title = currentLanguage === "ta"
+        ? "வைடல் ஹெல்த் நெவ் - உள்நுழைவு"
+        : "VITAL HEALTH NAV - Login";
+
+    document.getElementById("brandTitle").textContent = lang.brandTitle;
+    document.getElementById("brandAssistant").textContent = lang.brandAssistant;
+    document.getElementById("loginTitle").textContent = lang.title;
+    document.getElementById("loginSubtitle").textContent = lang.subtitle;
+    document.getElementById("usernameLabel").textContent = lang.username;
+    usernameInput.placeholder = lang.placeholder;
+    document.getElementById("continueBtn").textContent = lang.button;
+    document.getElementById("loginNote").textContent = lang.note;
+
+    loginError.textContent = "";
+
+    updateLanguageButtons();
+    updateNamePreview();
+}
+
+loginForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+
+    const username = cleanName(usernameInput.value);
+
+    if (!username) {
+        loginError.textContent = translations[currentLanguage].error;
+        usernameInput.focus();
+        return;
+    }
+
+    const tamilName = translateNameToTamil(username);
+
+    sessionStorage.setItem(USERNAME_KEY, username);
+    sessionStorage.setItem(USERNAME_TAMIL_KEY, tamilName || username);
+    sessionStorage.setItem(LANGUAGE_KEY, currentLanguage);
+
+    window.location.href = "/app";
+});
+
+document.getElementById("englishBtn").addEventListener("click", () => {
+    currentLanguage = "en";
+    sessionStorage.setItem(LANGUAGE_KEY, "en");
+    updateLoginLanguage();
+});
+
+document.getElementById("tamilBtn").addEventListener("click", () => {
+    currentLanguage = "ta";
+    sessionStorage.setItem(LANGUAGE_KEY, "ta");
+    updateLoginLanguage();
+    usernameInput.focus();
+});
+
+usernameInput.addEventListener("input", updateNamePreview);
+
+updateLoginLanguage();
+usernameInput.focus();
+</script>
+
+</body>
+</html>
